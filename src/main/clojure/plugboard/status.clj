@@ -34,7 +34,7 @@
       :B5 false
       :B6 (is-method? :options)
       :B7 (is-method? :delete :get :head :put :post)
-      :C7 true ; Key step - does the resource exist?
+      :C7 false ; Key step - does the resource exist?
       :C8 false
       :C9 true
       :D2 (is-method? :put)
@@ -166,7 +166,7 @@
      :otherwise (throw (IllegalStateException.)))))
 
 ;; Ultimately returns [status state]
-(defn get-status [decision-map-overrides state]
+(defn get-status-with-transition-trace [decision-map-overrides state]
   (let [reverse-transition-trace (fn [state]
                  (if (contains? state :status-trace)
                    (assoc state :status-trace (reverse (:status-trace state)))
@@ -175,5 +175,16 @@
         (trampoline flow-step :B1 (merge default-decision-map decision-map-overrides) (reverse-transition-trace state))
         ]
     [status (reverse-transition-trace new-state)]
+    ))
+
+(defn get-status [decision-map-overrides state]
+  (let [reverse-transition-trace (fn [state]
+                 (if (contains? state :status-trace)
+                   (assoc state :status-trace (reverse (:status-trace state)))
+                   state))
+        [status new-state]
+        (trampoline flow-step :B1 (merge default-decision-map decision-map-overrides) (reverse-transition-trace state))
+        ]
+    status
     ))
 

@@ -13,6 +13,12 @@
   )
 
 (deftest test-get-status
-  (is (= 200 (first (get-status {} {:request {:request-method :options}}))))
-  (is (= 200 (first (get-status {} {:request {:request-method :get}}))))
+  (is (= 200 (get-status {} {:request {:request-method :options}})))
+  (is (= 404 (get-status {} {:request {:request-method :get}})))
   )
+
+;; TODO: Would be better to use a record to return the [status state] in.
+
+(deftest test-can-override-resource-exists
+  (is (= 200 (get-status {:C7 true} {:request {:request-method :get}}))))
+
