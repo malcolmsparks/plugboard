@@ -166,7 +166,7 @@
      :otherwise (throw (IllegalStateException.)))))
 
 ;; Ultimately returns [status state]
-(defn get-status-with-transition-trace [decision-map-overrides state]
+(defn get-status-with-state [decision-map-overrides state]
   (let [reverse-transition-trace (fn [state]
                  (if (contains? state :status-trace)
                    (assoc state :status-trace (reverse (:status-trace state)))
@@ -178,13 +178,5 @@
     ))
 
 (defn get-status [decision-map-overrides state]
-  (let [reverse-transition-trace (fn [state]
-                 (if (contains? state :status-trace)
-                   (assoc state :status-trace (reverse (:status-trace state)))
-                   state))
-        [status new-state]
-        (trampoline flow-step :B1 (merge default-decision-map decision-map-overrides) (reverse-transition-trace state))
-        ]
-    status
-    ))
-
+  (let [[status state] (get-status-with-state decision-map-overrides state)]
+    status))
