@@ -2,7 +2,7 @@
   (:use
    clojure.test
    )
-  (:require [plugboard.core :as plugboard])
+  (:require [plugboard.plugboard :as plugboard])
   )
 
 (defn insert-path [state]

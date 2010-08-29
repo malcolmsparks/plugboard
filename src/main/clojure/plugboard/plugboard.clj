@@ -1,4 +1,4 @@
-(ns plugboard.core)
+(ns plugboard.plugboard)
 
 (def
  ^{:doc "The relative path of the web resource. Web resources are identified
