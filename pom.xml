@@ -62,41 +62,6 @@ Please see the LICENSE file for a copy of the GNU Affero General Public License.
             <artifactId>swank-clojure</artifactId>
             <version>1.2.1</version>
         </dependency>
-        <dependency>
-            <groupId>clout</groupId>
-            <artifactId>clout</artifactId>
-            <version>0.2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>hiccup</groupId>
-            <artifactId>hiccup</artifactId>
-            <version>0.2.6</version>
-        </dependency>
-        <dependency>
-            <groupId>compojure</groupId>
-            <artifactId>compojure</artifactId>
-            <version>0.4.1</version>
-        </dependency>
-        <dependency>
-            <groupId>ring</groupId>
-            <artifactId>ring-devel</artifactId>
-            <version>0.2.5</version>
-        </dependency>
-        <dependency>
-            <groupId>ring</groupId>
-            <artifactId>ring-httpcore-adapter</artifactId>
-            <version>0.2.5</version>
-        </dependency>
-        <dependency>
-            <groupId>ring</groupId>
-            <artifactId>ring-jetty-adapter</artifactId>
-            <version>0.2.5</version>
-        </dependency>
-        <dependency>
-            <groupId>ring</groupId>
-            <artifactId>ring-servlet</artifactId>
-            <version>0.2.5</version>
-        </dependency>
     </dependencies>
 
     <repositories>

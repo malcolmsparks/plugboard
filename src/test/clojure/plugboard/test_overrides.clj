@@ -1,7 +1,6 @@
 (ns plugboard.test-overrides
   (:use
    clojure.test
-   plugboard.status
    )
   (:require [plugboard.core :as plugboard])
   )
@@ -17,8 +16,8 @@
   ))
 
 (deftest path-insertion
-  (is (= 404 (get-status {} {:request {:request-method :get}})))
-  (is (= 200 (get-status {:B3 insert-path :C7 resource-exists} {:request {:request-method :get}})))
+  (is (= 404 (plugboard/get-status {} {:request {:request-method :get}})))
+  (is (= 200 (plugboard/get-status {:B3 insert-path :C7 resource-exists} {:request {:request-method :get}})))
     )
 
 

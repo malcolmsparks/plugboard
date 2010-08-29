@@ -1,7 +1,7 @@
 (ns plugboard.test-status
   (:use
    clojure.test
-   plugboard.status
+   plugboard.core
    )
   )
 
