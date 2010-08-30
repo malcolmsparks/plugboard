@@ -8,47 +8,6 @@
  path (atom :path))
 
 
-(defn is-method? [& candidates]
-  (fn [state]
-    (not (nil? (some (partial = ((comp :request-method :request) state))
-                     (if (coll? candidates) candidates (list candidates)))))))
-
-(def default-decision-map
-     {
-      :B1 true
-      :B2 false
-      :B3 false
-      :B4 true
-      :B5 false
-      :B6 (is-method? :options)
-      :B7 (is-method? :delete :get :head :put :post)
-      :C7 false ; Key step - does the resource exist?
-      :C8 false
-      :C9 true
-      :D2 (is-method? :put)
-      :D4 false
-      :D9 false
-      :E9 false
-      :G4 (is-method? :post)
-      :G10 false
-      :H13 (is-method? :post)
-      :H15 (is-method? :put)
-      :H18 (is-method? :delete)
-      :H19 (is-method? :get :head)
-      :H20 false
-      :I13 false
-      :I21 false
-      :J13 true
-      :J22 false
-      :K23 false
-      :L13 false ; Key step - must be accepted by a resource appender
-      :L24 false
-      :M11 true
-      :M13 (fn [state] (string? (get state :location)))
-      :M14 true
-      :M24 true
-      })
-
 (def transition-map
      {
       [:B1 false] 503
@@ -97,7 +56,7 @@
       [:M24 true] 200
       })
 
-(defn bool? [b]
+(defn- bool? [b]
   (or (true? b) (false? b)))
 
 ;; TODO: Rewrite to check existence with 'contains?'
@@ -154,17 +113,17 @@
      :otherwise (throw (IllegalStateException.)))))
 
 ;; Ultimately returns [status state]
-(defn get-status-with-state [decision-map-overrides state]
+(defn get-status-with-state [decision-map state]
   (let [reverse-transition-trace (fn [state]
                  (if (contains? state :status-trace)
                    (assoc state :status-trace (reverse (:status-trace state)))
                    state))
         [status new-state]
-        (trampoline flow-step :B1 (merge default-decision-map decision-map-overrides) (reverse-transition-trace state))
+        (trampoline flow-step :B1 decision-map (reverse-transition-trace state))
         ]
     [status (reverse-transition-trace new-state)]
     ))
 
-(defn get-status [decision-map-overrides state]
-  (let [[status state] (get-status-with-state decision-map-overrides state)]
+(defn get-status [decision-map state]
+  (let [[status state] (get-status-with-state decision-map state)]
     status))

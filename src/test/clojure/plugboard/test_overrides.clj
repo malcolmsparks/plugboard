@@ -2,7 +2,8 @@
   (:use
    clojure.test
    )
-  (:require [plugboard.plugboard :as plugboard])
+  (:require [plugboard.plugboard :as plugboard]
+            [plugboard.configurations :as configs])
   )
 
 (defn insert-path [state]
@@ -16,8 +17,12 @@
   ))
 
 (deftest path-insertion
-  (is (= 404 (plugboard/get-status {} {:request {:request-method :get}})))
-  (is (= 200 (plugboard/get-status {:B3 insert-path :C7 resource-exists} {:request {:request-method :get}})))
+  (is (= 404 (plugboard/get-status
+              configs/default-decision-map
+              {:request {:request-method :get}})))
+  (is (= 200 (plugboard/get-status
+              (configs/override-default-decision-map {:B3 insert-path :C7 resource-exists})
+              {:request {:request-method :get}})))
     )
 
 
