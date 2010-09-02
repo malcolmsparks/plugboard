@@ -15,6 +15,7 @@
       :B5 false
       :B6 (is-web-method? :options)
       :B7 (is-web-method? :delete :get :head :put :post)
+      :B8 (is-web-method? :trace :connect)
       :C7 false ; Key step - does the resource exist?
       :C8 false
       :C9 true

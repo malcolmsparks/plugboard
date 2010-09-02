@@ -24,7 +24,10 @@
       [:B5 true] 403
       [:B6 false] :B7
       [:B6 true] 200
+      [:B7 false] :B8
       [:B7 true] :C7
+      [:B8 false] 501
+      [:B8 true] 405
       [:C7 false] :D2
       [:C7 true] :C8
       [:C8 false] :D9
