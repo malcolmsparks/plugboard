@@ -2,8 +2,9 @@
 
 (defn is-web-method? [& candidates]
   (fn [state]
-    (not (nil? (some (partial = ((comp :request-method :request) state))
-                     (if (coll? candidates) candidates (list candidates)))))))
+    (let [method (get-in state [:request :request-method])]
+      (not (nil? (some (partial = method)
+                       (if (coll? candidates) candidates (list candidates))))))))
 
 (def default-decision-map
      {
