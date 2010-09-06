@@ -37,6 +37,9 @@
       [:C9 true] :D9
       [:D2 false] :D4
       [:D4 false] :G4
+      [:D4 true] :D5
+      [:D5 false] :E5
+      [:D5 true] 301
       [:D9 false] :E9
       [:E9 false] :G10
       [:G4 false] 404
