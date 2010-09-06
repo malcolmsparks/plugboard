@@ -6,6 +6,11 @@
       (not (nil? (some (partial = method)
                        (if (coll? candidates) candidates (list candidates))))))))
 
+(defn header-exists? [header]
+  (fn [state]
+    (contains? (get-in state [:request :headers]) header)
+    ))
+
 (def default-decision-map
      {
       :B1 true
@@ -16,6 +21,7 @@
       :B6 (is-web-method? :options)
       :B7 (is-web-method? :delete :get :head :put :post)
       :B8 (is-web-method? :trace :connect)
+      :C2 (header-exists? "If-Match")
       :C7 false ; Key step - does the resource exist?
       :C8 false
       :C9 true

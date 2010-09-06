@@ -13,6 +13,11 @@
   (is (not ((is-web-method? :get :head) {:request {:request-method :options}})))
   )
 
+(deftest test-header-exists
+  (is ((header-exists? "If-Match") {:request {:headers {"If-Match" "*"}}}))
+  (is (not ((header-exists? "If-Match") {:request {:headers {"Dummy" "true"}}})))
+  )
+
 (deftest test-get-status
   (is (= 200 (get-status default-decision-map {:request {:request-method :options}})))
   (is (= 404 (get-status default-decision-map {:request {:request-method :get}})))
