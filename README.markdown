@@ -33,6 +33,10 @@ Of course, sometimes a developer needs to control the response headers. For exam
 
 It turns out that this is very useful. It means that web applications can add many features by layering a set of plugboard overlays. The overall effect is to raise the level of abstraction above the HTTP protocol itself while at the same time delegating responsibility for adhering to the HTTP standard to the library itself.
 
+## License
+
+Plugboard is free software and is licensed under the GNU Affero General Public License (AGPL) version 3. This license agreement can be found in the LICENSE file.
+
 ## Feedback
 
 I hope you like plugboard and find it useful for your own applications. Plugboard is a 'work in progress' and needs your help to evolve and mature. Please feel free to write to me at malcolm@congreve.com with any comments, ideas and suggestions you may have.
