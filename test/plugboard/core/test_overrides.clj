@@ -1,9 +1,9 @@
-(ns plugboard.test-overrides
+(ns plugboard.core.test-overrides
   (:use
    clojure.test
    )
-  (:require [plugboard.plugboard :as plugboard]
-            [plugboard.configurations :as configs])
+  (:require [plugboard.core.plugboard :as plugboard]
+            [plugboard.core.configurations :as configs])
   )
 
 (defn insert-path [state]

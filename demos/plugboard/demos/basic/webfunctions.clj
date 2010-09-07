@@ -1,9 +1,9 @@
-(ns basic.webfunctions
+(ns plugboard.demos.basic.webfunctions
   (:use
-   webfunction.context
+   plugboard.webfunction.context
    )
   (:require
-   [webfunction.webfunction :as web]
+   [plugboard.webfunction.webfunction :as web]
    [hiccup.core :as hiccup]
    )
   )

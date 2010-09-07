@@ -1,4 +1,4 @@
-(ns plugboard.plugboard)
+(ns plugboard.core.plugboard)
 
 (def ^{:private true} _path)
 

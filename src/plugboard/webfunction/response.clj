@@ -1,24 +1,24 @@
 ;; Copyright 2010 Malcolm Sparks.
 ;;
-;; This file is part of Webfunction.
+;; This file is part of Plugboard.
 ;;
-;; Webfunction is free software: you can redistribute it and/or modify it under the
+;; Plugboard is free software: you can redistribute it and/or modify it under the
 ;; terms of the GNU Affero General Public License as published by the Free
 ;; Software Foundation, either version 3 of the License, or (at your option) any
 ;; later version.
 ;;
-;; Webfunction is distributed in the hope that it will be useful but WITHOUT ANY
+;; Plugboard is distributed in the hope that it will be useful but WITHOUT ANY
 ;; WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
 ;; A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
 ;; details.
 ;;
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
-(ns webfunction.response
-  (:require [webfunction.webfunction :as web]
-            [webfunction.context :as context]
-            [plugboard.plugboard :as plugboard]
-            webfunction.plugboards
+(ns plugboard.webfunction.response
+  (:require [plugboard.webfunction.webfunction :as web]
+            [plugboard.webfunction.context :as context]
+            [plugboard.core.plugboard :as plugboard]
+            plugboard.webfunction.plugboards
             )
   )
 
@@ -46,7 +46,7 @@
 
 (defn get-response [req plugboard]
   (let [[status state] (plugboard/get-status-with-state plugboard {:request req})
-        webfn (first (get state webfunction.plugboards/compatible-webfunctions))
+        webfn (first (get state plugboard.webfunction.plugboards/compatible-webfunctions))
         headers (get-headers state webfn)
         body (get-body status req webfn)
         ]

@@ -1,29 +1,29 @@
 ;; Copyright 2010 Malcolm Sparks.
 ;;
-;; This file is part of Webfunction.
+;; This file is part of Plugboard.
 ;;
-;; Webfunction is free software: you can redistribute it and/or modify it under the
+;; Plugboard is free software: you can redistribute it and/or modify it under the
 ;; terms of the GNU Affero General Public License as published by the Free
 ;; Software Foundation, either version 3 of the License, or (at your option) any
 ;; later version.
 ;;
-;; Webfunction is distributed in the hope that it will be useful but WITHOUT ANY
+;; Plugboard is distributed in the hope that it will be useful but WITHOUT ANY
 ;; WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
 ;; A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
 ;; details.
 ;;
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
-(ns webfunction.test-response
+(ns plugboard.webfunction.test-response
   (:use
    clojure.test
    clojure.contrib.with-ns
-   webfunction.response
+   plugboard.webfunction.response
    ring.middleware.params
    )
   (:require
-   plugboard.configurations
-   webfunction.plugboards
+   plugboard.core.configurations
+   plugboard.webfunction.plugboards
    [hiccup.core :as hiccup]
    [clojure.xml :as xml]
    [clojure.zip :as zip]
@@ -32,22 +32,22 @@
    )
   )
 
-(def testing-ns (create-ns 'webfunction.test-body.ns))
+(def testing-ns (create-ns 'plugboard.webfunction.test-body.ns))
 
 (with-ns testing-ns
 
   (clojure.core/refer-clojure)
   (require 'hiccup.core)
-  (require 'webfunction.webfunction)
+  (require 'plugboard.webfunction.webfunction)
   
-  (defn ^{webfunction.webfunction/uri "/index.html"
-          webfunction.webfunction/content-type "text/html"
+  (defn ^{plugboard.webfunction.webfunction/uri "/index.html"
+          plugboard.webfunction.webfunction/content-type "text/html"
           :title "Title"}
     rep1 []
     (hiccup.core/html
      [:body
-      [:h1  (webfunction.context/get-meta :title)]
-      [:p#query-param (webfunction.context/get-query-param "fish")]
+      [:h1  (plugboard.webfunction.context/get-meta :title)]
+      [:p#query-param (plugboard.webfunction.context/get-query-param "fish")]
       ]
      )
     )
@@ -60,8 +60,8 @@
           "Content-Type"))))
 
 (def plugboard
-     (merge plugboard.configurations/default-decision-map
-            (webfunction.plugboards/web-function-resources [testing-ns])
+     (merge plugboard.core.configurations/default-decision-map
+            (plugboard.webfunction.plugboards/web-function-resources [testing-ns])
             ))
 
 (def request {:uri "/index.html" :request-method :get :query-string "fish=Herring"})

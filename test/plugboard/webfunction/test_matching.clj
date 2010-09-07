@@ -1,46 +1,46 @@
 ;; Copyright 2010 Malcolm Sparks.
 ;;
-;; This file is part of Webfunction.
+;; This file is part of Plugboard.
 ;;
-;; Webfunction is free software: you can redistribute it and/or modify it under the
+;; Plugboard is free software: you can redistribute it and/or modify it under the
 ;; terms of the GNU Affero General Public License as published by the Free
 ;; Software Foundation, either version 3 of the License, or (at your option) any
 ;; later version.
 ;;
-;; Webfunction is distributed in the hope that it will be useful but WITHOUT ANY
+;; Plugboard is distributed in the hope that it will be useful but WITHOUT ANY
 ;; WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
 ;; A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
 ;; details.
 ;;
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
-(ns webfunction.test-matching
+(ns plugboard.webfunction.test-matching
   (:use
    clojure.test
    clojure.contrib.with-ns
-   webfunction.plugboards
+   plugboard.webfunction.plugboards
    )
   )
 
-(def testing-ns1 (create-ns 'webfunction.test-matching.ns1))
-(def testing-ns2 (create-ns 'webfunction.test-matching.ns2))
+(def testing-ns1 (create-ns 'plugboard.webfunction.test-matching.ns1))
+(def testing-ns2 (create-ns 'plugboard.webfunction.test-matching.ns2))
 
 (with-ns testing-ns1
 
   (clojure.core/refer-clojure)
   
-  (defn ^{webfunction.webfunction/uri "/index.html"
-          webfunction.webfunction/content-type "text/html"}
+  (defn ^{plugboard.webfunction.webfunction/uri "/index.html"
+          plugboard.webfunction.webfunction/content-type "text/html"}
     rep1 []
     (+ 2 2))
 
-  (defn ^{webfunction.webfunction/uri "/index.html"
-          webfunction.webfunction/content-type "application/xml"}
+  (defn ^{plugboard.webfunction.webfunction/uri "/index.html"
+          plugboard.webfunction.webfunction/content-type "application/xml"}
     rep2 []
     (+ 2 2))
 
-  (defn ^{webfunction.webfunction/uri "/content.html"
-          webfunction.webfunction/content-type "application/xml"}
+  (defn ^{plugboard.webfunction.webfunction/uri "/content.html"
+          plugboard.webfunction.webfunction/content-type "application/xml"}
     rep3 []
     (+ 2 2))
   )
@@ -49,8 +49,8 @@
 
   (clojure.core/refer-clojure)
   
-  (defn ^{webfunction.webfunction/uri "/index.html"
-          webfunction.webfunction/content-type "text/html"}
+  (defn ^{plugboard.webfunction.webfunction/uri "/index.html"
+          plugboard.webfunction.webfunction/content-type "text/html"}
     rep1 []
     (+ 2 2))
 

@@ -1,8 +1,8 @@
-(ns plugboard.test-status
+(ns plugboard.core.test-status
   (:use
    clojure.test
-   plugboard.plugboard
-   plugboard.configurations
+   plugboard.core.plugboard
+   plugboard.core.configurations
    )
   )
 

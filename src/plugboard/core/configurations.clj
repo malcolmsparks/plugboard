@@ -1,4 +1,4 @@
-(ns plugboard.configurations)
+(ns plugboard.core.configurations)
 
 (defn is-web-method? [& candidates]
   (fn [state]

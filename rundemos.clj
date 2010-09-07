@@ -2,21 +2,21 @@
   (:require
    [swank.swank :as swank]
    ring.adapter.jetty
-   [plugboard.configurations :as pc]
-   (webfunction plugboards response)
-   basic.webfunctions   
+   [plugboard.core.configurations :as pc]
+   (plugboard.webfunction plugboards response)
+   plugboard.demos.basic.webfunctions   
    ))
 
 (defn application-handler [req]
-  (webfunction.response/get-response
+  (plugboard.webfunction.response/get-response
    req
    (merge pc/default-decision-map
-          (webfunction.plugboards/web-function-resources
-           (map find-ns ['basic.webfunctions]))
+          (plugboard.webfunction.plugboards/web-function-resources
+           (map find-ns ['plugboard.demos.basic.webfunctions]))
 
           ;; Here we add a simple plugboard combinator that adds welcome
           ;; page behaviour when the uri ends in a slash.
-          (webfunction.plugboards/welcome-page "index.html") 
+          (plugboard.webfunction.plugboards/welcome-page "index.html") 
 
           )
    ))

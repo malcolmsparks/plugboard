@@ -1,23 +1,23 @@
 ;; Copyright 2010 Malcolm Sparks.
 ;;
-;; This file is part of Webfunction.
+;; This file is part of Plugboard.
 ;;
-;; Webfunction is free software: you can redistribute it and/or modify it under the
+;; Plugboard is free software: you can redistribute it and/or modify it under the
 ;; terms of the GNU Affero General Public License as published by the Free
 ;; Software Foundation, either version 3 of the License, or (at your option) any
 ;; later version.
 ;;
-;; Webfunction is distributed in the hope that it will be useful but WITHOUT ANY
+;; Plugboard is distributed in the hope that it will be useful but WITHOUT ANY
 ;; WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
 ;; A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
 ;; details.
 ;;
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
-(ns webfunction.plugboards
-  (:require [webfunction.webfunction :as web]
-            webfunction.selectors
-            [plugboard.plugboard :as plugboard]))
+(ns plugboard.webfunction.plugboards
+  (:require [plugboard.webfunction.webfunction :as web]
+            plugboard.webfunction.selectors
+            [plugboard.core.plugboard :as plugboard]))
 
 (def ^{:private true} _mw)
 
@@ -37,7 +37,7 @@
   (mapcat
    (fn [web-ns]
      (filter #(webfn-matches-path? path %)
-             (webfunction.selectors/get-web-functions
+             (plugboard.webfunction.selectors/get-web-functions
               web-ns)))
    web-namespaces)
   )

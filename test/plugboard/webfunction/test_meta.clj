@@ -1,27 +1,27 @@
 ;; Copyright 2010 Malcolm Sparks.
 ;;
-;; This file is part of Webfunction.
+;; This file is part of Plugboard.
 ;;
-;; Webfunction is free software: you can redistribute it and/or modify it under the
+;; Plugboard is free software: you can redistribute it and/or modify it under the
 ;; terms of the GNU Affero General Public License as published by the Free
 ;; Software Foundation, either version 3 of the License, or (at your option) any
 ;; later version.
 ;;
-;; Webfunction is distributed in the hope that it will be useful but WITHOUT ANY
+;; Plugboard is distributed in the hope that it will be useful but WITHOUT ANY
 ;; WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
 ;; A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
 ;; details.
 ;;
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
-(ns webfunction.test-meta
+(ns plugboard.webfunction.test-meta
   (:use
    clojure.test
    clojure.contrib.with-ns
-   webfunction.selectors
+   plugboard.webfunction.selectors
    )
   (:require
-   [webfunction.webfunction :as web]
+   [plugboard.webfunction.webfunction :as web]
   ))
 
 (def testing-ns (create-ns 'webfunction.test-meta.ns1))
@@ -30,15 +30,15 @@
 
   (clojure.core/refer-clojure)
   
-  (defn ^{webfunction.webfunction/uri "index.html"
-          webfunction.webfunction/content-type "text/html"
-          webfunction.webfunction/title "Index"}
+  (defn ^{plugboard.webfunction.webfunction/uri "index.html"
+          plugboard.webfunction.webfunction/content-type "text/html"
+          plugboard.webfunction.webfunction/title "Index"}
     rep1 []
     (+ 2 2))
 
-  (defn ^{webfunction.webfunction/uri "content.html"
-          webfunction.webfunction/content-type "text/html"
-          webfunction.webfunction/title "Index"}
+  (defn ^{plugboard.webfunction.webfunction/uri "content.html"
+          plugboard.webfunction.webfunction/content-type "text/html"
+          plugboard.webfunction.webfunction/title "Index"}
     rep2 []
     (+ 2 2))
 
@@ -48,7 +48,7 @@
   )
 
 (deftest test-is-web-namespace
-  (is (true? (is-web-namespace? (find-ns 'webfunction.webfunction))))
+  (is (true? (is-web-namespace? (find-ns 'plugboard.webfunction.webfunction))))
   (is (false? (is-web-namespace? (find-ns 'clojure.core))))
   )
 
