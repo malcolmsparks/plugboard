@@ -6,5 +6,12 @@
 
   :dev-dependencies [
                      [swank-clojure "1.2.1"]
+                     [hiccup "0.2.6"
+                      :exclusions
+                      [org.clojure/clojure org.clojure/clojure-contrib]]
+                     [ring/ring-core "0.2.5"
+                      :exclusions
+                      [org.clojure/clojure org.clojure/clojure-contrib]]
+                     [ring/ring-jetty-adapter "0.2.5"]
                      ]
   )

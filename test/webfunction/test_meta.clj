@@ -1,0 +1,65 @@
+;; Copyright 2010 Malcolm Sparks.
+;;
+;; This file is part of Webfunction.
+;;
+;; Webfunction is free software: you can redistribute it and/or modify it under the
+;; terms of the GNU Affero General Public License as published by the Free
+;; Software Foundation, either version 3 of the License, or (at your option) any
+;; later version.
+;;
+;; Webfunction is distributed in the hope that it will be useful but WITHOUT ANY
+;; WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+;; A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+;; details.
+;;
+;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
+
+(ns webfunction.test-meta
+  (:use
+   clojure.test
+   clojure.contrib.with-ns
+   webfunction.selectors
+   )
+  (:require
+   [webfunction.webfunction :as web]
+  ))
+
+(def testing-ns (create-ns 'webfunction.test-meta.ns1))
+
+(with-ns testing-ns
+
+  (clojure.core/refer-clojure)
+  
+  (defn ^{webfunction.webfunction/uri "index.html"
+          webfunction.webfunction/content-type "text/html"
+          webfunction.webfunction/title "Index"}
+    rep1 []
+    (+ 2 2))
+
+  (defn ^{webfunction.webfunction/uri "content.html"
+          webfunction.webfunction/content-type "text/html"
+          webfunction.webfunction/title "Index"}
+    rep2 []
+    (+ 2 2))
+
+  (defn fn1 [] nil)
+  (defn ^{:private true} fn2 [] nil)
+  (defn ^{:dummy true} fn3 [] nil)
+  )
+
+(deftest test-is-web-namespace
+  (is (true? (is-web-namespace? (find-ns 'webfunction.webfunction))))
+  (is (false? (is-web-namespace? (find-ns 'clojure.core))))
+  )
+
+(deftest test-is-web-function
+  (is (true? (is-web-function? (get (ns-publics testing-ns) 'rep1))))
+  (is (true? (is-web-function? (get (ns-publics testing-ns) 'rep2))))
+  (is (false? (is-web-function? (get (ns-publics testing-ns) 'fn1))))
+  (is (false? (is-web-function? (get (ns-publics testing-ns) 'fn3))))
+  )
+
+(deftest test-get-web-functions
+  (is (= 2 (count (get-web-functions testing-ns))))
+  )
+
