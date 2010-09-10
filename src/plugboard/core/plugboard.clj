@@ -83,15 +83,7 @@
       (throw (Exception. (format "No transition for tuple: %s" tuple)))
       res)))
 
-(defn add-transition-record [state step1 decision-result step2]
-  (let [existing-trace (:status-trace state) tuple [step1 decision-result step2]]
-    (assoc state :status-trace
-           (if (nil? existing-trace) (list tuple)
-               (conj existing-trace tuple))))
-)
-
 ;; Returns [next-step new-state]
-;; TODO: Simplify.
 (defn perform-step [step decision-map state]
   (let [decision (lookup-decision decision-map step)]
     (cond
@@ -100,17 +92,17 @@
        (cond
         (bool? decision-result)
         (let [next (lookup-next [step decision-result])]
-          [next (add-transition-record state step decision-result next)])
+          [next state])
 
         (vector? decision-result)
         (let [next (lookup-next [step (first decision-result)])]
-          [next (add-transition-record (merge state (second decision-result)) step decision-result next)]
+          [next (merge state (second decision-result))]
           )
 
         :otherwise (throw (IllegalStateException. (format "Step %s. Function %s must result in a boolean" step decision-result)))))
 
      (bool? decision)
-     (let [next (lookup-next [step decision])] [next (add-transition-record state step decision next)])
+     (let [next (lookup-next [step decision])] [next state])
 
      :otherwise (throw (IllegalStateException.)))))
 
@@ -124,16 +116,11 @@
 
 ;; Ultimately returns [status state]
 (defn get-status-with-state [decision-map state]
-  (let [reverse-transition-trace (fn [state]
-                 (if (contains? state :status-trace)
-                   (assoc state :status-trace (reverse (:status-trace state)))
-                   state))
-        [status new-state]
-        (trampoline flow-step :B1 decision-map (reverse-transition-trace state))
-        ]
-    [status (reverse-transition-trace new-state)]
+  (let [[status new-state]
+        (trampoline flow-step :B1 decision-map state)]
+    [status new-state]
     ))
 
 (defn get-status [decision-map state]
-  (let [[status state] (get-status-with-state decision-map state)]
+  (let [[status _] (get-status-with-state decision-map state)]
     status))
