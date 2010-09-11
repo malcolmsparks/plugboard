@@ -22,7 +22,7 @@
    ring.middleware.params
    )
   (:require
-   plugboard.core.configurations
+   [plugboard.core.plugboard :as plugboard]
    plugboard.webfunction.plugboards
    [hiccup.core :as hiccup]
    [clojure.xml :as xml]
@@ -60,8 +60,9 @@
           "Content-Type"))))
 
 (def plugboard
-     (merge plugboard.core.configurations/default-decision-map
-            (plugboard.webfunction.plugboards/web-function-resources [testing-ns])
+     (plugboard/merge-plugboards
+      plugboard/default-decision-map
+      (plugboard.webfunction.plugboards/web-function-resources [testing-ns])
             ))
 
 (def request {:uri "/index.html" :request-method :get :query-string "fish=Herring"})

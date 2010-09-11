@@ -66,11 +66,74 @@
       [:M24 true] 200
       })
 
+(defn is-web-method? [& candidates]
+  (fn [state dlg]
+    (let [method (get-in state [:request :request-method])]
+      (not (nil? (some (partial = method)
+                       (if (coll? candidates) candidates (list candidates))))))))
+
+(defn header-exists? [header]
+  (fn [state dlg]
+    (contains? (get-in state [:request :headers]) header)
+    ))
+
+(def default-decision-map
+     {
+      :B1 true
+      :B2 false
+      :B3 false
+      :B4 true
+      :B5 false
+      :B6 (is-web-method? :options)
+      :B7 (is-web-method? :delete :get :head :put :post)
+      :B8 (is-web-method? :trace :connect)
+      :C2 (header-exists? "If-Match")
+      :C7 false ; Key step - does the resource exist?
+      :C8 false
+      :C9 true
+      :D2 (is-web-method? :put)
+      :D4 false
+      :D9 false
+      :E9 false
+      :G4 (is-web-method? :post)
+      :G10 false
+      :H13 (is-web-method? :post)
+      :H15 (is-web-method? :put)
+      :H18 (is-web-method? :delete)
+      :H19 (is-web-method? :get :head)
+      :H20 false
+      :I13 false
+      :I21 false
+      :J13 true
+      :J22 false
+      :K23 false
+      :L13 false ; Key step - must be accepted by a resource appender
+      :L24 false
+      :M11 true
+      :M13 (fn [state dlg] (string? (get state :location)))
+      :M14 true
+      :M24 true
+      })
+
+;; ------------------------ Construction
+
+(defn map-fn-on-map-vals [m f]
+  (zipmap (keys m) (map f (vals m)))
+  )
+
+(defn merge-plugboards [& maps]
+  (let [cons* (fn [a b]
+                (if (list? a) (cons b a)
+                    (list a b)))
+        ensure-list (fn [a] (if (list? a) a (list a)))]
+    (map-fn-on-map-vals (apply (partial merge-with cons*) maps) ensure-list)
+    ))
+
+;; ------------------------ Flow
+
 (defn- bool? [b]
   (or (true? b) (false? b)))
 
-;; TODO: Rewrite to check existence with 'contains?'
-;; Decisions can return a boolean or a [boolean new-state-members]. (TODO: Document this)
 (defn lookup-decision [decision-map step]
   (let [res (decision-map step)]
     (if (nil? res)
@@ -83,28 +146,27 @@
       (throw (Exception. (format "No transition for tuple: %s" tuple)))
       res)))
 
+; Returns [boolean state] decision
+(defn decide [state t dlg]
+  (cond
+   (fn? t) (let [res (t state dlg)]
+             (if 
+                 (vector? res) res
+                 [res state])
+                 )
+   :otherwise [t state]
+   ))
+
+; Returns [boolean state]
+(defn decides [state l]
+  (decide state (first l) (fn [state] (decides state (rest l))))
+  )
+
 ;; Returns [next-step new-state]
 (defn perform-step [step decision-map state]
-  (let [decision (lookup-decision decision-map step)]
-    (cond
-     (fn? decision)
-     (let [decision-result (decision state)]
-       (cond
-        (bool? decision-result)
-        (let [next (lookup-next [step decision-result])]
-          [next state])
-
-        (vector? decision-result)
-        (let [next (lookup-next [step (first decision-result)])]
-          [next (merge state (second decision-result))]
-          )
-
-        :otherwise (throw (IllegalStateException. (format "Step %s. Function %s must result in a boolean" step decision-result)))))
-
-     (bool? decision)
-     (let [next (lookup-next [step decision])] [next state])
-
-     :otherwise (throw (IllegalStateException.)))))
+  (let [[decision new-state] (decides state (reverse (get decision-map step)))]
+    [(lookup-next [step decision]) new-state])
+  )
 
 ;; Ultimately returns [status state]
 (defn flow-step [step decision-map state]

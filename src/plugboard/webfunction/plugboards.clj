@@ -46,12 +46,14 @@
 (defn web-function-resources [web-namespaces]
   {
    :B3
-   (fn [state]
+   (fn [state dlg]
+     ;; TODO: Call dlg
      [false (merge {plugboard/path (get-in state [:request :uri])} state)]
      )
 
    :C7
-   (fn [state]
+   (fn [state dlg]
+     ;; TODO: Call dlg
      (let [path (get state plugboard/path)
            webfns (get-matching-webfunctions-for-path path web-namespaces)
            result (not (empty? webfns))
@@ -66,7 +68,7 @@
    })
 
 (defn welcome-page [path]
-  {:D4 (fn [state] (= \/ (last (get-in state [:request :uri]))))
-   :D5 (fn [state] [true
+  {:D4 (fn [state dlg] (= \/ (last (get-in state [:request :uri]))))
+   :D5 (fn [state dlg] [true
                     (let [location (str (get-in state [:request :uri]) path)]
                       (assoc state :location location))])})
