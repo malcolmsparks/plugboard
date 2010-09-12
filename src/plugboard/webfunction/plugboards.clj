@@ -17,10 +17,11 @@
 (ns plugboard.webfunction.plugboards
   (:require [plugboard.webfunction.webfunction :as web]
             plugboard.webfunction.selectors
-            [plugboard.core.plugboard :as plugboard]))
+            [clojure.contrib.condition :as condition]
+            [plugboard.core.plugboard :as plugboard])
+)
 
 (def ^{:private true} _mw)
-
 (def
  ^{:doc "A vector of webfunctions that are compatible with the request."}
  compatible-webfunctions (var _mw))
@@ -72,3 +73,16 @@
    :D5 (fn [state dlg] [true
                     (let [location (str (get-in state [:request :uri]) path)]
                       (assoc state :location location))])})
+
+;; Plug in an appender capable of appending a resource.  The appender must
+;; append the resource and return the new location as a uri string (which may
+;; depend itself on the client's preferred media type
+(defn redirecting-appender [f]
+  {
+   :L13 (fn [state dlg]
+          [true (assoc state :location (f state))])
+   :M13 (fn [state dlg] (contains? state :location))
+   ;; For this type of appender we want to do always redirect to new-location.
+   :M14 (fn [state dlg] true)
+   }
+  )

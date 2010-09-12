@@ -59,7 +59,10 @@
       [:D9 false] :E9
       [:E9 false] :G10
       [:G4 false] 404
+      [:G4 true] :H4
       [:G10 false] :H13
+      [:H4 false] 404
+      [:H4 true] :J4
       [:H13 false] :H15
       [:H13 true] :I13
       [:H15 false] :H18
@@ -68,12 +71,20 @@
       [:H20 false] :I21
       [:I13 false] :J13
       [:I21 false] :J22
+      [:J4 false] 501
+      [:J4 true] :L4
       [:J13 true] :L13
       [:J22 false] :K23
       [:K23 false] :L24
+      [:L4 false] 500
+      [:L4 true] :M4
       [:L13 false] 500
       [:L13 true] :M13
       [:L24 false] :M24
+      [:M2 false] 201
+      [:M2 true] 303
+      [:M4 false] :M11
+      [:M4 true] :M2
       [:M11 true] 200
       [:M13 false] :M11
       [:M13 true] :M14
@@ -113,6 +124,7 @@
       :E9 false
       :G4 (is-web-method? :post)
       :G10 false
+      :H4 false
       :H13 (is-web-method? :post)
       :H15 (is-web-method? :put)
       :H18 (is-web-method? :delete)
@@ -123,7 +135,7 @@
       :J13 true
       :J22 false
       :K23 false
-      :L13 false ; Key step - must be accepted by a resource appender
+      :L13 false
       :L24 false
       :M11 true
       :M13 (fn [state dlg] (string? (get state :location)))
@@ -138,10 +150,10 @@
   )
 
 (defn merge-plugboards [& maps]
-  (let [cons* (fn [a b]
-                (if (list? a) (cons b a)
-                    (list a b)))
-        ensure-list (fn [a] (if (list? a) a (list a)))]
+  (letfn [(cons* [a b]
+                 (if (list? a) (cons b a)
+                     (list a b)))
+          (ensure-list [a] (if (list? a) a (list a)))]
     (map-fn-on-map-vals (apply (partial merge-with cons*) maps) ensure-list)
     ))
 

@@ -19,12 +19,14 @@
   (:require
    plugboard.demos.menu
    plugboard.demos.helloworld.configuration
+   plugboard.demos.forms.configuration
    [compojure.route :as route]
    ))
 
 (defroutes main-routes
   (GET "/" [] (fn [req] (plugboard.demos.menu/render-page)))
   (GET "/helloworld/*" [] (plugboard.demos.helloworld.configuration/create-handler))
+  (ANY "/forms/*" [] (plugboard.demos.forms.configuration/create-handler))
   (route/not-found "<h1>Page not found</h1>"))
 
 

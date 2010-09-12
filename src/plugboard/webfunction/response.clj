@@ -23,9 +23,14 @@
   )
 
 (defn get-content-type [webfn]
-  (let [ct (get (meta webfn) web/content-type)]
+  (let [ct (get (meta webfn) web/content-type)] ; TODO: Replace with if-let?
     (if ct {"Content-Type" ct} {})
     ))
+
+;; TODO: See plugboard.webfunction.plugboards for a better approach which
+;; replaces the use of this hard-coded location header. A better design would be
+;; to allow webfunctions to return maps and/or to allow plugins to set headers
+;; via the state which then become part of the response.
 
 (defn- get-location-header [state]
   (let [location (get state :location)]

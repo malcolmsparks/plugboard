@@ -24,6 +24,7 @@
     [:h2 "Main menu"]
     [:ul
      [:li [:a {:href "helloworld/"} "helloworld"]]
+     [:li [:a {:href "forms/"} "forms"]]
      ]
     ]))
      
