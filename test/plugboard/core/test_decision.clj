@@ -14,7 +14,7 @@
 ;;
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
-(ns plugboard.core.test-merge
+(ns plugboard.core.test-decision
   (:use clojure.test
         plugboard.core.plugboard)
   )

@@ -16,18 +16,18 @@
 
 (ns plugboard.demos.main
   (:require
-   [plugboard.core.configurations :as pc]
    (plugboard.webfunction plugboards response)
+   plugboard.core.plugboard
    plugboard.demos.basic.webfunctions   
    ))
 
 (defn create-application-handler [req]
   (plugboard.webfunction.response/get-response
    req
-   (merge-plugboards
+   (plugboard.core.plugboard/merge-plugboards
 
     ;; We start with the defaults.
-    pc/default-decision-map
+    plugboard.core.plugboard/default-decision-map
 
     ;; Then add the logic that treats functions which have particular metadata
     ;; as web resources.
