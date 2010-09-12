@@ -147,7 +147,7 @@
       res)))
 
 ; Returns [boolean state] decision
-(defn decide [state t dlg]
+(defn- decide [state t dlg]
   (cond
    (fn? t) (let [res (t state dlg)]
              (if 
@@ -158,13 +158,23 @@
    ))
 
 ; Returns [boolean state]
-(defn decides [state l]
+(defn- decides [state l]
   (decide state (first l) (fn [state] (decides state (rest l))))
+  )
+
+(defn ^{:doc "Get the result of the given layer of plug functions. We reverse
+        the list so that the first elements of the list override later elements
+        during the implementation. Normally we prefer the latter elements of the
+        list to override the preceeding elements because that is the convention
+        already established by the merge function. Reversing this convention
+        would confuse developers already familiar with Clojure conventions."  }
+        get-plug-decision [state l]
+  (decides state (reverse l))
   )
 
 ;; Returns [next-step new-state]
 (defn perform-step [step decision-map state]
-  (let [[decision new-state] (decides state (reverse (get decision-map step)))]
+  (let [[decision new-state] (get-plug-decision state (get decision-map step))]
     [(lookup-next [step decision]) new-state])
   )
 
