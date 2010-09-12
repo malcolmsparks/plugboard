@@ -14,7 +14,7 @@
 ;;
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
-(ns plugboard.demos.basic.webfunctions
+(ns plugboard.demos.helloworld.webfunctions
   (:use
    plugboard.webfunction.context
    )
@@ -24,11 +24,10 @@
    )
   )
 
-(defn ^{web/uri "/index.html"
+(defn ^{web/uri "/helloworld/index.html"
         web/content-type "text/html"
-        :title "Demo: Basic"}
+        :title "Hello World!"}
   index-html []
   (hiccup/html
    [:h1 (get-meta :title)]
-   [:p "Welcome to the demo site"]))
-
+   [:p "Congratulations. Plugboard is working."]))

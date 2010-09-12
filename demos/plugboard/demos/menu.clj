@@ -14,18 +14,16 @@
 ;;
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
-(ns rundemos
-  (:require
-   [swank.swank :as swank]
-   ring.adapter.jetty
-   plugboard.demos.main
-   ))
+(ns plugboard.demos.menu
+  (:require [hiccup.core :as hiccup])
+  )
 
-(ring.adapter.jetty/run-jetty
-;; plugboard.demos.main/create-application-handler
- plugboard.demos.main/main-routes
- {:join? false
-  :port 8082}
- )
-
-(swank.swank/start-repl)
+(defn render-page []
+  (hiccup/html
+   [:h1 "Plugboard"
+    [:h2 "Main menu"]
+    [:ul
+     [:li [:a {:href "helloworld/"} "helloworld"]]
+     ]
+    ]))
+     

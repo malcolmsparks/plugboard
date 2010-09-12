@@ -15,27 +15,16 @@
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
 (ns plugboard.demos.main
+  (:use compojure.core)
   (:require
-   (plugboard.webfunction plugboards response)
-   plugboard.core.plugboard
-   plugboard.demos.basic.webfunctions   
+   plugboard.demos.menu
+   plugboard.demos.helloworld.configuration
+   [compojure.route :as route]
    ))
 
-(defn create-application-handler [req]
-  (plugboard.webfunction.response/get-response
-   req
-   (plugboard.core.plugboard/merge-plugboards
+(defroutes main-routes
+  (GET "/" [] (fn [req] (plugboard.demos.menu/render-page)))
+  (GET "/helloworld/*" [] (plugboard.demos.helloworld.configuration/create-handler))
+  (route/not-found "<h1>Page not found</h1>"))
 
-    ;; We start with the defaults.
-    plugboard.core.plugboard/default-decision-map
 
-    ;; Then add the logic that treats functions which have particular metadata
-    ;; as web resources.
-    (plugboard.webfunction.plugboards/web-function-resources
-     (map find-ns ['plugboard.demos.basic.webfunctions]))
-
-    ;; Here we add a simple plugboard combinator that adds welcome page
-    ;; behaviour when the uri ends in a slash.
-    (plugboard.webfunction.plugboards/welcome-page "index.html") 
-
-    )))

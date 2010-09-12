@@ -13,5 +13,9 @@
                       :exclusions
                       [org.clojure/clojure org.clojure/clojure-contrib]]
                      [ring/ring-jetty-adapter "0.2.5"]
+                     [compojure "0.4.1"
+                      :exclusions
+                      [org.clojure/clojure org.clojure/clojure-contrib]
+                      ]
                      ]
   )
