@@ -42,5 +42,5 @@
 
 (defn ^{web/uri "/forms/new-resource.html"}
   new-resource-html []
-  "This is your new resource. TODO: let's add it to memory in submit.html so we can display it here"
+  "This is your new resource. TODO: let's add it to memory in submit.html so we can display it here."
   )
