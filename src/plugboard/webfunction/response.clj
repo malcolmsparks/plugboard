@@ -23,25 +23,14 @@
   )
 
 (defn get-content-type [webfn]
-  (let [ct (get (meta webfn) web/content-type)] ; TODO: Replace with if-let?
-    (if ct {"Content-Type" ct} {})
-    ))
+  (if-let [ct (get (meta webfn) web/content-type)]
+    {"Content-Type" ct}
+    {})
+    )
 
-;; TODO: See plugboard.webfunction.plugboards for a better approach which
-;; replaces the use of this hard-coded location header. A better design would be
-;; to allow webfunctions to return maps and/or to allow plugins to set headers
-;; via the state which then become part of the response.
-
-(defn- get-location-header [state]
-  (let [location (get state :location)]
-    (if location {"Location" location} {})
-    ))
-
-(defn get-headers [state webfn]
-  (merge
-   (get-content-type [webfn])
-   (get-location-header state)
-  ))
+(defn get-headers-from-webfn [webfn]
+  (get-content-type [webfn])
+  )
 
 (defn get-body [status request webfn]
   (if (not (nil? webfn))
@@ -49,10 +38,15 @@
                     {:status status :request request :meta (meta webfn)}}
       (webfn))))
 
+(defn initialize-state [req]
+  {:request req :response {:headers {}}}
+  )
+
 (defn get-response [req plugboard]
-  (let [[status state] (plugboard/get-status-with-state plugboard {:request req :response {:headers {}}})
+  (let [[status state] (plugboard/get-status-with-state plugboard
+                         (initialize-state req))
         webfn (first (get state plugboard.webfunction.plugboards/compatible-webfunctions))
-        headers (get-in state [:response :headers])
+        headers (merge (get-in state [:response :headers] (get-headers-from-webfn webfn)))
         body (get-body status req webfn)
         ]
     {:status status :headers headers :body body}

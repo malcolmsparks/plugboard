@@ -26,6 +26,11 @@
  ^{:doc "A vector of webfunctions that are compatible with the request."}
  compatible-webfunctions (var _mw))
 
+(def ^{:private true} _newlocation)
+(def
+ ^{:doc "The location of the newly appended resource. Used for redirects."}
+ new-location (var _newlocation))
+
 (defn webfn-matches-path? [path webfn]
   (let [uri (get (meta webfn) web/uri)]
     (cond
@@ -68,11 +73,15 @@
      )
    })
 
+(defn set-header [state name value]
+  (update-in state [:response :headers] (fn [old] (assoc old name value)))
+  )
+
 (defn welcome-page [path]
   {:D4 (fn [state dlg] (= \/ (last (get-in state [:request :uri]))))
    :D5 (fn [state dlg] [true
                     (let [location (str (get-in state [:request :uri]) path)]
-                      (assoc state :location location))])})
+                      (set-header state "Location" location))])})
 
 ;; Plug in an appender capable of appending a resource.  The appender must
 ;; append the resource and return the new location as a uri string (which may
@@ -80,9 +89,10 @@
 (defn redirecting-appender [f]
   {
    :L13 (fn [state dlg]
-          [true (assoc state :location (f state))])
-   :M13 (fn [state dlg] (contains? state :location))
+          [true (assoc state new-location (f state))])
+   :M13 (fn [state dlg] (contains? state new-location))
    ;; For this type of appender we want to do always redirect to new-location.
-   :M14 (fn [state dlg] true)
+   :M14 (fn [state dlg] [true (set-header state "Location" (get state new-location))])
    }
   )
+
