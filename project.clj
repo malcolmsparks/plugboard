@@ -17,5 +17,6 @@
                       :exclusions
                       [org.clojure/clojure org.clojure/clojure-contrib]
                       ]
+                     [autodoc "0.7.1"]
                      ]
   )
