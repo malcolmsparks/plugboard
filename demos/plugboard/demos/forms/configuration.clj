@@ -23,7 +23,6 @@
   )
 
 (defn appender [state]
-  (println "Appending!")
   "new-resource.html"
   )
 

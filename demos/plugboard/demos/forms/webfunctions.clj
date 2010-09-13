@@ -37,7 +37,6 @@
 
 (defn ^{web/uri "/forms/submit.html"}
   submit-html []
-  (println *web-context*)
   "Thanks. You shouldn't see this, because the redirect should have kicked in."
   )
 
