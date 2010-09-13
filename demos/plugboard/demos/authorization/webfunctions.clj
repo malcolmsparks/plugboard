@@ -14,18 +14,21 @@
 ;;
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
-(ns plugboard.demos.menu
-  (:require [hiccup.core :as hiccup])
+(ns plugboard.demos.authorization.webfunctions
+  (:use
+   plugboard.webfunction.context
+   )
+  (:require
+   [plugboard.webfunction.webfunction :as web]
+   [hiccup.core :as hiccup]
+   )
   )
 
-(defn render-page []
+(defn ^{web/uri "/authorization/index.html"
+        web/content-type "text/html"
+        :title "Authorization demo"}
+  index-html []
   (hiccup/html
-   [:h1 "Plugboard"
-    [:h2 "Main menu"]
-    [:ul
-     [:li [:a {:href "helloworld/"} "helloworld"]]
-     [:li [:a {:href "forms/"} "forms"]]
-     [:li [:a {:href "authorization/"} "authorization"]]
-     ]
-    ]))
-     
+   [:h1 (get-meta :title)]
+   ))
+

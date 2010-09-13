@@ -20,6 +20,7 @@
    plugboard.demos.menu
    plugboard.demos.helloworld.configuration
    plugboard.demos.forms.configuration
+   plugboard.demos.authorization.configuration
    [compojure.route :as route]
    ))
 
@@ -34,6 +35,8 @@
        (create-handler (plugboard.demos.helloworld.configuration/create-plugboard)))
   (ANY "/forms/*" []
        (create-handler (plugboard.demos.forms.configuration/create-plugboard)))
+  (ANY "/authorization/*" []
+       (create-handler (plugboard.demos.authorization.configuration/create-plugboard)))
   (route/not-found "<h1>Page not found</h1>"))
 
 
