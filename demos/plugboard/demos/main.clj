@@ -23,10 +23,17 @@
    [compojure.route :as route]
    ))
 
+(defn create-handler [plugboard]
+  (fn [req]
+    (plugboard.webfunction.response/get-response req plugboard)
+    ))
+
 (defroutes main-routes
   (GET "/" [] (fn [req] (plugboard.demos.menu/render-page)))
-  (GET "/helloworld/*" [] (plugboard.demos.helloworld.configuration/create-handler))
-  (ANY "/forms/*" [] (plugboard.demos.forms.configuration/create-handler))
+  (GET "/helloworld/*" []
+       (create-handler (plugboard.demos.helloworld.configuration/create-plugboard)))
+  (ANY "/forms/*" []
+       (create-handler (plugboard.demos.forms.configuration/create-plugboard)))
   (route/not-found "<h1>Page not found</h1>"))
 
 

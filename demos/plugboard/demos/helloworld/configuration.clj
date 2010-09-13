@@ -22,23 +22,20 @@
    )
   )
 
-(defn create-handler []
-  (fn [req]
-    (plugboard.webfunction.response/get-response
-     req
-     (plugboard.core.plugboard/merge-plugboards
+(defn create-plugboard []
+  (plugboard.core.plugboard/merge-plugboards
 
-      ;; We start with the defaults.
-      plugboard.core.plugboard/default-decision-map
+   ;; We start with the defaults.
+   plugboard.core.plugboard/default-decision-map
 
-      ;; Then add the logic that treats functions which have particular metadata
-      ;; as web resources.
-      (plugboard.webfunction.plugboards/web-function-resources
-       (map find-ns ['plugboard.demos.helloworld.webfunctions]))
+   ;; Then add the logic that treats functions which have particular metadata
+   ;; as web resources.
+   (plugboard.webfunction.plugboards/web-function-resources
+    (map find-ns ['plugboard.demos.helloworld.webfunctions]))
 
-      ;; Here we add a simple plugboard combinator that adds welcome page
-      ;; behaviour when the uri ends in a slash.
-      (plugboard.webfunction.plugboards/welcome-page "index.html") 
+   ;; Here we add a simple plugboard combinator that adds welcome page
+   ;; behaviour when the uri ends in a slash.
+   (plugboard.webfunction.plugboards/welcome-page "index.html") 
 
-      ))))
-
+   )
+  )
