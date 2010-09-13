@@ -50,9 +50,9 @@
       (webfn))))
 
 (defn get-response [req plugboard]
-  (let [[status state] (plugboard/get-status-with-state plugboard {:request req})
+  (let [[status state] (plugboard/get-status-with-state plugboard {:request req :response {:headers {}}})
         webfn (first (get state plugboard.webfunction.plugboards/compatible-webfunctions))
-        headers (get-headers state webfn)
+        headers (get-in state [:response :headers])
         body (get-body status req webfn)
         ]
     {:status status :headers headers :body body}

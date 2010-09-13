@@ -46,14 +46,14 @@
 
 (defn web-function-resources [web-namespaces]
   {
-   :B3
+   :B3 ; Malformed?
    (fn [state dlg]
      ;; TODO: Call dlg
      [false (merge {plugboard/path (get-in state [:request :uri])} state)]
      )
 
-   :C7
-   (fn [state dlg]
+   :C7 ; Resource exists?
+   (fn [state dlg] 
      ;; TODO: Call dlg
      (let [path (get state plugboard/path)
            webfns (get-matching-webfunctions-for-path path web-namespaces)
