@@ -22,7 +22,9 @@
             )
   )
 
-(defn get-content-type [webfn]
+
+(defn ^{:doc "Get the content type from the web function metadata"}
+  get-content-type [webfn]
   (if-let [ct (get (meta webfn) web/content-type)]
     {"Content-Type" ct}
     {})
