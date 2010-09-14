@@ -25,7 +25,7 @@
     [:ul
      [:li [:a {:href "helloworld/"} "helloworld"]]
      [:li [:a {:href "forms/"} "forms"]]
-     [:li [:a {:href "authorization/"} "authorization"]]
+     [:li [:a {:href "basic-auth/"} "basic-auth"]]
      ]
     ]))
      

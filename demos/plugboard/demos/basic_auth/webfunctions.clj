@@ -14,7 +14,7 @@
 ;;
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
-(ns plugboard.demos.authorization.webfunctions
+(ns plugboard.demos.basic-auth.webfunctions
   (:use
    plugboard.webfunction.context
    )
@@ -24,9 +24,9 @@
    )
   )
 
-(defn ^{web/uri "/authorization/index.html"
+(defn ^{web/uri "/basic-auth/index.html"
         web/content-type "text/html"
-        :title "Authorization demo"}
+        :title "Basic-Auth demo"}
   index-html []
   (hiccup/html
    [:h1 (get-meta :title)]
