@@ -214,10 +214,17 @@
      (integer? next) [next new-state]
      :otherwise (throw (IllegalStateException.)))))
 
+;; TODO: Rename decision-map to plugboard everywhere.
+(defn initialize-state [decision-map state]
+  (if-let [inits (get decision-map :init)]
+    (reduce #(%2 %1) state inits) ; this calls all the init functions, threading the state through each one.
+    state
+    ))
+
 ;; Ultimately returns [status state]
 (defn get-status-with-state [decision-map state]
   (let [[status new-state]
-        (trampoline flow-step :B1 decision-map state)]
+        (trampoline flow-step :B1 decision-map (initialize-state decision-map state))]
     [status new-state]
     ))
 

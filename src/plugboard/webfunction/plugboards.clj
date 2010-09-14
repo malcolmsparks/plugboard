@@ -18,13 +18,15 @@
   (:require [plugboard.webfunction.webfunction :as web]
             plugboard.webfunction.selectors
             [clojure.contrib.condition :as condition]
-            [plugboard.core.plugboard :as plugboard])
-)
+            [plugboard.core.plugboard :as plugboard]
+            clojure.contrib.base64
+            )
+  )
 
-(def ^{:private true} _mw)
+(def ^{:private true} _wn)
 (def
- ^{:doc "A vector of webfunctions that are compatible with the request."}
- compatible-webfunctions (var _mw))
+ ^{:doc "A vector of namespaces that contain web functions."}
+ web-namespaces (var _wn))
 
 (def ^{:private true} _newlocation)
 (def
@@ -39,6 +41,8 @@
      :otherwise false))
   )
 
+;; TODO: Ignore all web functions that declare a status code - these are special
+
 (defn get-matching-webfunctions-for-path [path web-namespaces]
   (mapcat
    (fn [web-ns]
@@ -49,8 +53,9 @@
   )
 
 
-(defn web-function-resources [web-namespaces]
+(defn web-function-resources [namespaces]
   {
+   :init (fn [state] (assoc state web-namespaces namespaces))
    :B3 ; Malformed?
    (fn [state dlg]
      ;; TODO: Call dlg
@@ -60,16 +65,8 @@
    :C7 ; Resource exists?
    (fn [state dlg] 
      ;; TODO: Call dlg
-     (let [path (get state plugboard/path)
-           webfns (get-matching-webfunctions-for-path path web-namespaces)
-           result (not (empty? webfns))
-           ]
-       [result
-        (if result
-          (merge state {compatible-webfunctions webfns})
-          state)
-        ]
-       )
+     ;; TODO: web-namespaces may have been modified at this point - get from the state not the environment.
+     [(not (empty? (get-matching-webfunctions-for-path (get state plugboard/path) namespaces))) state]
      )
    })
 
@@ -96,3 +93,23 @@
    }
   )
 
+;; The auth string arrives as "Basic user:password" (where user:password is base64 encorded
+(defn compare-secret [expected auth-string]
+  (let [actual (second (re-seq #"[\w=]+" auth-string))]
+    (= expected actual)
+    ))
+
+(defn basic-authentication [realm requires-auth-fn user password]
+  {:B4
+   (let [encoded (clojure.contrib.base64/encode-str (str user ":" password))]
+     (fn [state dlg]
+       (if (requires-auth-fn (get state :request))
+         (let [res
+               (and
+                (contains? (get-in state [:request :headers]) "authorization")
+                (compare-secret encoded (get-in state [:request :headers "authorization"])))]
+           (if res true 
+               [false (plugboard.webfunction.plugboards/set-header state "WWW-Authenticate" (format "Basic realm=\"%s\"" realm))])
+           )
+         true
+         )))})

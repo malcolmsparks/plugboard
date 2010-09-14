@@ -67,6 +67,11 @@
 
 (def request {:uri "/index.html" :request-method :get :query-string "fish=Herring"})
 
+;; After initialization the state should store the web-namespaces.
+(deftest test-initialization
+  (is (= {plugboard.webfunction.plugboards/web-namespaces [testing-ns]}
+         (plugboard/initialize-state plugboard {}))))
+  
 (deftest test-index-response
   (let [handler (wrap-params (create-response-handler plugboard) :query-string)
         response (handler request)

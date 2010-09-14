@@ -14,27 +14,29 @@
 ;;
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
-(ns plugboard.webfunction.webfunction)
-
-;; Define keys
-
-(def ^{:private true} _uri nil)
-(def uri (var _uri))
-
-(def ^{:private true} _status nil)
-(def status (var _status))
-
-(def ^{:private true} _content-type nil)
-(def content-type (var _content-type))
-
-(def ^{:private true} _title nil)
-(def title (var _title))
-
-;; Context functions
-
-(def *context* nil)
-
-(defn get-title []
-  (get-in *context* [:meta title])
+(ns plugboard.demos.status-views.webfunctions
+  (:use
+   plugboard.webfunction.context
+   )
+  (:require
+   [plugboard.webfunction.webfunction :as web]
+   [hiccup.core :as hiccup]
+   )
   )
 
+(defn ^{web/uri "/status-views/index.html"
+        web/content-type "text/html"
+        :title "Index"}
+  index-html []
+  (hiccup/html
+   [:h1 (get-meta :title)]
+   [:p "Click on this " [:a {:href "missing.html"} "missing link"] "."]
+   ))
+
+(defn ^{web/status 404
+        web/content-type "text/html"
+        :title "Not found!"}
+  not-found-html []
+  (hiccup/html
+   [:h1 (get-meta :title)]
+   [:p "Oh dear. Your page couldn't be found."])) ; TODO: Indicate page in response.

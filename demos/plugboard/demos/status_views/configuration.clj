@@ -14,11 +14,11 @@
 ;;
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
-(ns plugboard.demos.basic-auth.configuration
+(ns plugboard.demos.status-views.configuration
   (:require
    (plugboard.webfunction plugboards response)
    plugboard.core.plugboard
-   plugboard.demos.basic-auth.webfunctions
+   plugboard.demos.status-views.webfunctions
    )
   )
 
@@ -31,16 +31,11 @@
    ;; Then add the logic that treats functions which have particular metadata
    ;; as web resources.
    (plugboard.webfunction.plugboards/web-function-resources
-    (map find-ns ['plugboard.demos.basic-auth.webfunctions]))
+    (map find-ns ['plugboard.demos.status-views.webfunctions]))
 
    ;; Here we add a simple plugboard combinator that adds welcome page
    ;; behaviour when the uri ends in a slash.
-   (plugboard.webfunction.plugboards/welcome-page "index.html")
+   (plugboard.webfunction.plugboards/welcome-page "index.html") 
 
-   (plugboard.webfunction.plugboards/basic-authentication
-    (str (gensym "realm"))
-    (fn [req] (not (empty? (re-seq #".*/secret-place.html" (get req :uri)))))
-    "scott" "tiger")
-
-
-   ))
+   )
+  )

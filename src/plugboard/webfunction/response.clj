@@ -18,7 +18,7 @@
   (:require [plugboard.webfunction.webfunction :as web]
             [plugboard.webfunction.context :as context]
             [plugboard.core.plugboard :as plugboard]
-            plugboard.webfunction.plugboards
+            [plugboard.webfunction.plugboards :as plugboards]
             )
   )
 
@@ -42,10 +42,45 @@
   {:request req :response {:headers {}}}
   )
 
+(defn webfn-matches-path? [path webfn]
+  (let [uri (get (meta webfn) web/uri)]
+    (cond
+     (nil? uri) true                    ; it's a match if it's not specified.
+     (fn? uri) (not (nil? (uri path)))
+     (string? uri) (= uri path)
+     :otherwise false))
+  )
+
+(defn webfn-matches-status? [status webfn]
+  (let [s (or (get (meta webfn) web/status) 200)]
+    (cond
+     (fn? s) (true? (s status))
+     (number? s) (= s status)
+     :otherwise false))
+  )
+
+(defn webfn-matches? [path status webfn]
+  (and
+   (webfn-matches-path? path webfn)
+   (webfn-matches-status? status webfn)
+   )
+  )
+
+(defn get-matching-webfunctions [path status namespaces]
+  (mapcat
+   (fn [web-ns]
+     (filter #(webfn-matches? path status %)
+             (plugboard.webfunction.selectors/get-web-functions
+              web-ns)))
+   namespaces)
+  )
+
 (defn get-response [req plugboard]
   (let [[status state] (plugboard/get-status-with-state plugboard
                          (initialize-state req))
-        webfn (first (get state plugboard.webfunction.plugboards/compatible-webfunctions))
+        namespaces (get state plugboards/web-namespaces)
+        webfns (get-matching-webfunctions (get state plugboard/path) status namespaces)
+        webfn (first webfns)
         headers (merge (get-in state [:response :headers] (get-headers-from-webfn webfn)))
         body (get-body status req webfn)
         ]
