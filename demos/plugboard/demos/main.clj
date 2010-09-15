@@ -18,7 +18,7 @@
   (:use compojure.core)
   (:require
    plugboard.demos.menu
-   plugboard.demos.helloworld.configuration
+   plugboard.demos.hello-world.configuration
    plugboard.demos.forms.configuration
    plugboard.demos.status-views.configuration
    plugboard.demos.basic-auth.configuration
@@ -32,8 +32,8 @@
 
 (defroutes main-routes
   (GET "/" [] (fn [req] (plugboard.demos.menu/render-page)))
-  (GET "/helloworld/*" []
-       (create-handler (plugboard.demos.helloworld.configuration/create-plugboard)))
+  (GET "/hello-world/*" []
+       (create-handler (plugboard.demos.hello-world.configuration/create-plugboard)))
   (ANY "/forms/*" []
        (create-handler (plugboard.demos.forms.configuration/create-plugboard)))
   (GET "/status-views/*" []

@@ -14,7 +14,7 @@
 ;;
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
-(ns plugboard.demos.helloworld.webfunctions
+(ns plugboard.demos.hello-world.webfunctions
   (:use
    plugboard.webfunction.context
    )
@@ -24,7 +24,7 @@
    )
   )
 
-(defn ^{web/uri "/helloworld/index.html"
+(defn ^{web/uri "/hello-world/index.html"
         web/content-type "text/html"
         :title "Hello World!"}
   index-html []
