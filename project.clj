@@ -17,6 +17,7 @@
                       :exclusions
                       [org.clojure/clojure org.clojure/clojure-contrib]
                       ]
+                     [clj-http "0.1.1"]
 ;;                     [autodoc "0.7.1"]
                      ]
   )

@@ -29,5 +29,9 @@
         :title "Hello World!"}
   index-html []
   (hiccup/html
-   [:h1 (get-meta :title)]
-   [:p "Congratulations. Plugboard is working."]))
+   [:html
+    [:head [:title (get-meta :title)]]
+    [:body
+     [:h1 (get-meta :title)]
+     [:p "Congratulations. Plugboard is working."]
+     ]]))
