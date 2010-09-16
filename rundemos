@@ -1,2 +1,2 @@
 #!/bin/sh
-java -cp 'demos:src:lib/*:lib/dev/*' clojure.main rundemos.clj
+java -cp 'test:src:lib/*:lib/dev/*' clojure.main rundemos.clj
