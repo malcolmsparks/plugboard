@@ -33,7 +33,7 @@
 (deftest test-demo
   (let [response (http/get (format "http://localhost:%d/hello-world/" (get-jetty-port)))
         doc (body-zip response)]
-    (= 200 (get response :status))
+    (is (= 200 (get response :status)))
     (is (= "Hello World!" (xml1-> doc :body :h1 text)))
     )
   )

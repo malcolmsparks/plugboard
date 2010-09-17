@@ -34,7 +34,7 @@
   (let [response (http/get
                   (format "http://localhost:%d/query-params/query.html?coffee=Latte" (get-jetty-port)))
         doc (body-zip response)]
-    (= 200 (get response :status))
+    (is (= 200 (get response :status)))
     (is (= "You chose a Latte" (xml1-> doc :body :h1 text)))
     )
   )
