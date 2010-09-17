@@ -14,11 +14,11 @@
 ;;
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
-(ns plugboard.demos.hello-world.test-responses
+(ns plugboard.demos.query-params.test-responses
   (:use clojure.test compojure.core)
   (:require
    ring.adapter.jetty
-   plugboard.demos.hello-world.configuration
+   plugboard.demos.query-params.configuration
    [clj-http.client :as client]
    [clojure.xml :as xml]
    [clojure.zip :as zip]
@@ -35,10 +35,10 @@
 
 (defn run-jetty []
   (ring.adapter.jetty/run-jetty
-   ;; plugboard.demos.main/create-application-handler
+
    (defroutes main-routes
-     (GET "/hello-world/*" []
-          (create-handler (plugboard.demos.hello-world.configuration/create-plugboard))))
+     (GET "/query-params/*" []
+          (create-handler (plugboard.demos.query-params.configuration/create-plugboard))))
    {:join? false :port port}
    ))
 
@@ -58,9 +58,11 @@
                  (java.io.StringReader. (:body response))))))
 
 (deftest test-demo
-  (let [response (client/get (format "http://localhost:%d/hello-world/" port))
-        doc (body-zip response)]
+  (let [response (client/get
+                  (format "http://localhost:%d/query-params/query.html?coffee=Latte" port))
+        doc (body-zip response)
+        ]
     (= 200 (get response :status))
-    (is (= "Hello World!" (zf/xml1-> doc :body :h1 zf/text)))
+    (is (= "You chose a Latte" (zf/xml1-> doc :body :h1 zf/text)))
     )
   )

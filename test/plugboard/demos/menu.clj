@@ -23,7 +23,8 @@
    [:h1 "Plugboard"
     [:h2 "Main menu"]
     [:ul
-     [:li [:a {:href "hello-world/"} "hello-world"]] ; TODO: Hyphenate
+     [:li [:a {:href "hello-world/"} "hello-world"]]
+     [:li [:a {:href "query-params/"} "query-params"]]
      [:li [:a {:href "forms/"} "forms"]]
      [:li [:a {:href "status-views/"} "status-views"]]
      [:li [:a {:href "basic-auth/"} "basic-auth"]]
