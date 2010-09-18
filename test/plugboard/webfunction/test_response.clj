@@ -61,7 +61,7 @@
 
 (def plugboard
      (plugboard/merge-plugboards
-      plugboard/default-decision-map
+      plugboard/default-wiring
       (plugboard.webfunction.plugboards/web-function-resources [testing-ns])
             ))
 

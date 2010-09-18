@@ -36,11 +36,11 @@
 (deftest path-insertion
   (is (= 404 (plugboard/get-status
               (plugboard/merge-plugboards
-               plugboard/default-decision-map)
+               plugboard/default-wiring)
               {:request {:request-method :get}})))
   (is (= 200 (plugboard/get-status
               (plugboard/merge-plugboards
-               plugboard/default-decision-map
+               plugboard/default-wiring
                {:B3 insert-path :C7 resource-exists})
               {:request {:request-method :get}})))
     )

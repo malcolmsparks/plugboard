@@ -26,7 +26,7 @@
   (plugboard.core.plugboard/merge-plugboards
 
    ;; We start with the defaults.
-   plugboard.core.plugboard/default-decision-map
+   plugboard.core.plugboard/default-wiring
 
    ;; Then add the logic that treats functions which have particular metadata
    ;; as web resources.

@@ -104,7 +104,7 @@
     (contains? (get-in state [:request :headers]) header)
     ))
 
-(def default-decision-map
+(def default-wiring
      {
       :B1 true
       :B2 false
@@ -115,7 +115,7 @@
       :B7 (is-web-method? :delete :get :head :put :post)
       :B8 (is-web-method? :trace :connect)
       :C2 (header-exists? "If-Match")
-      :C7 false ; Key step - does the resource exist?
+      :C7 false ; Key junction - does the resource exist?
       :C8 false
       :C9 true
       :D2 (is-web-method? :put)
@@ -162,8 +162,8 @@
 (defn- bool? [b]
   (or (true? b) (false? b)))
 
-(defn lookup-decision [decision-map step]
-  (let [res (decision-map step)]
+(defn lookup-decision [plugboard step]
+  (let [res (plugboard step)]
     (if (nil? res)
       (throw (Exception. (format "No decision for step: %s" step)))
       res)))
@@ -200,34 +200,33 @@
   (decides state (reverse l))
   )
 
-;; Returns [next-step new-state]
-(defn perform-step [step decision-map state]
-  (let [[decision new-state] (get-plug-decision state (get decision-map step))]
-    [(lookup-next [step decision]) new-state])
+;; Returns [next-junction new-state]
+(defn perform-junction [junction plugboard state]
+  (let [[decision new-state] (get-plug-decision state (get plugboard junction))]
+    [(lookup-next [junction decision]) new-state])
   )
 
 ;; Ultimately returns [status state]
-(defn flow-step [step decision-map state]
-  (let [[next new-state] (perform-step step decision-map state)]
+(defn flow-junction [junction plugboard state]
+  (let [[next new-state] (perform-junction junction plugboard state)]
     (cond
-     (keyword? next) (fn [] (flow-step next decision-map new-state))
+     (keyword? next) (fn [] (flow-junction next plugboard new-state))
      (integer? next) [next new-state]
      :otherwise (throw (IllegalStateException.)))))
 
-;; TODO: Rename decision-map to plugboard everywhere.
-(defn initialize-state [decision-map state]
-  (if-let [inits (get decision-map :init)]
+(defn initialize-state [plugboard state]
+  (if-let [inits (get plugboard :init)]
     (reduce #(%2 %1) state inits) ; this calls all the init functions, threading the state through each one.
     state
     ))
 
 ;; Ultimately returns [status state]
-(defn get-status-with-state [decision-map state]
+(defn get-status-with-state [plugboard state]
   (let [[status new-state]
-        (trampoline flow-step :B1 decision-map (initialize-state decision-map state))]
+        (trampoline flow-junction :B1 plugboard (initialize-state plugboard state))]
     [status new-state]
     ))
 
-(defn get-status [decision-map state]
-  (let [[status _] (get-status-with-state decision-map state)]
+(defn get-status [plugboard state]
+  (let [[status _] (get-status-with-state plugboard state)]
     status))
