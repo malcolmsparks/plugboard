@@ -41,8 +41,6 @@
      :otherwise false))
   )
 
-;; TODO: Ignore all web functions that declare a status code - these are special
-
 (defn get-matching-webfunctions-for-path [path web-namespaces]
   (mapcat
    (fn [web-ns]
@@ -52,21 +50,17 @@
    web-namespaces)
   )
 
-
 (defn web-function-resources [namespaces]
   {
    :init (fn [state] (assoc state web-namespaces namespaces))
    :B3 ; Malformed?
    (fn [state dlg]
-     ;; TODO: Call dlg
      [false (merge {plugboard/path (get-in state [:request :uri])} state)]
      )
 
    :C7 ; Resource exists?
    (fn [state dlg] 
-     ;; TODO: Call dlg
-     ;; TODO: web-namespaces may have been modified at this point - get from the state not the environment.
-     [(not (empty? (get-matching-webfunctions-for-path (get state plugboard/path) namespaces))) state]
+     [(not (empty? (get-matching-webfunctions-for-path (get state plugboard/path) (get state web-namespaces)))) state]
      )
    })
 

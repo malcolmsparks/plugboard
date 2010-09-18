@@ -38,9 +38,6 @@
   (is (= 404 (get-status (merge-plugboards default-wiring) {:request {:request-method :get}})))
   )
 
-;; TODO: Would be better to use a record to return the [status state] in.
-;; TODO: Not sure about the above TODO - perhaps better that we don't use records.
-
 (deftest test-can-override-resource-exists
   (is (= 200 (get-status (merge-plugboards default-wiring {:C7 true})
                          {:request {:request-method :get}}))))
