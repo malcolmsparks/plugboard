@@ -24,6 +24,18 @@
   (get *web-context* :status)
   )
 
+(defn ^{:doc "Create an absolute URI from the relative path. This allows web
+  applications to be agnostic about where they exist in a contextual uri tree
+  while still being able to create absolute URIs. Hence the context of the web
+  application does not have to be encoded in the source code of the web
+  application."}
+  create-uri [path]
+  (let [uri (get *web-context* [:request :uri])
+        curr (get *web-context* [:request :route-params "*"])
+        ]
+    (str (apply str (take (- (count uri) (count curr)) uri)) path)
+    ))
+
 (defn get-request []
   (get *web-context* :request)
   )

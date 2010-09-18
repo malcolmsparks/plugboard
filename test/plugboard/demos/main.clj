@@ -20,6 +20,7 @@
    plugboard.demos.menu
    plugboard.demos.hello-world.configuration
    plugboard.demos.query-params.configuration
+   plugboard.demos.links.configuration
    plugboard.demos.forms.configuration
    plugboard.demos.status-views.configuration
    plugboard.demos.basic-auth.configuration
@@ -37,6 +38,8 @@
        (create-handler (plugboard.demos.hello-world.configuration/create-plugboard)))
   (GET "/query-params/*" []
        (create-handler (plugboard.demos.query-params.configuration/create-plugboard)))
+  (GET "/links/*" []
+       (create-handler (plugboard.demos.links.configuration/create-plugboard)))
   (ANY "/forms/*" []
        (create-handler (plugboard.demos.forms.configuration/create-plugboard)))
   (GET "/status-views/*" []

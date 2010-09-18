@@ -25,6 +25,7 @@
     [:ul
      [:li [:a {:href "hello-world/"} "hello-world"]]
      [:li [:a {:href "query-params/"} "query-params"]]
+     [:li [:a {:href "links/"} "links"]]
      [:li [:a {:href "forms/"} "forms"]]
      [:li [:a {:href "status-views/"} "status-views"]]
      [:li [:a {:href "basic-auth/"} "basic-auth"]]
