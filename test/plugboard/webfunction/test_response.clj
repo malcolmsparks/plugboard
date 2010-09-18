@@ -40,7 +40,7 @@
   (require 'hiccup.core)
   (require 'plugboard.webfunction.webfunction)
   
-  (defn ^{plugboard.webfunction.webfunction/uri "/index.html"
+  (defn ^{plugboard.webfunction.webfunction/path "index.html"
           plugboard.webfunction.webfunction/content-type "text/html"
           :title "Title"}
     rep1 []
@@ -65,12 +65,15 @@
       (plugboard.webfunction.plugboards/web-function-resources [testing-ns])
             ))
 
-(def request {:uri "/index.html" :request-method :get :query-string "fish=Herring"})
+(def request {:uri "/index.html" :route-params {"*" "index.html"} :request-method :get :query-string "fish=Herring"})
 
 ;; After initialization the state should store the web-namespaces.
+(comment ;; Re-instate
 (deftest test-initialization
-  (is (= {plugboard.webfunction.plugboards/web-namespaces [testing-ns]}
+  (is (= {plugboard.webfunction.plugboards/web-namespaces [testing-ns]
+          plugboard/path "/index.html"}
          (plugboard/initialize-state plugboard {}))))
+)
   
 (deftest test-index-response
   (let [handler (wrap-params (create-response-handler plugboard) :query-string)

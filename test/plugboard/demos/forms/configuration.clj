@@ -41,8 +41,7 @@
    ;; behaviour when the uri ends in a slash.
    (plugboard.webfunction.plugboards/welcome-page "index.html")
 
-   ;; Here we add a simple plugboard combinator that adds welcome page
-   ;; behaviour when the uri ends in a slash.
+   ;; Here we add the appender which creates the new resource and returns its location.
    (plugboard.webfunction.plugboards/redirecting-appender appender)
 
    ))

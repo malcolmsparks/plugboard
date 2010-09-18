@@ -34,10 +34,10 @@
  new-location (var _newlocation))
 
 (defn webfn-matches-path? [path webfn]
-  (let [uri (get (meta webfn) web/uri)]
+  (let [p (get (meta webfn) web/path)]
     (cond
-     (fn? uri) (not (nil? (uri path)))
-     (string? uri) (= uri path)
+     (fn? p) (not (nil? (p path)))
+     (string? p) (= p path)
      :otherwise false))
   )
 
@@ -52,12 +52,11 @@
 
 (defn web-function-resources [namespaces]
   {
-   :init (fn [state] (assoc state web-namespaces namespaces))
-   :B3 ; Malformed?
-   (fn [state dlg]
-     [false (merge {plugboard/path (get-in state [:request :uri])} state)]
-     )
-
+   :init (fn [state]
+           (-> state
+               (assoc web-namespaces namespaces)
+               (assoc plugboard/path (get-in state [:request :route-params "*"]))
+               ))
    :C7 ; Resource exists?
    (fn [state dlg] 
      [(not (empty? (get-matching-webfunctions-for-path (get state plugboard/path) (get state web-namespaces)))) state]

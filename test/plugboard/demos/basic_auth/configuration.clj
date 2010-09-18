@@ -39,8 +39,8 @@
 
    (plugboard.webfunction.plugboards/basic-authentication
     (str (gensym "realm"))
+    ;; TODO: make this function accept state in addition to req.
     (fn [req] (not (empty? (re-seq #".*/secret-place.html" (get req :uri)))))
     "scott" "tiger")
-
 
    ))

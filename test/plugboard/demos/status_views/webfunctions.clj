@@ -24,7 +24,7 @@
    )
   )
 
-(defn ^{web/uri "/status-views/index.html"
+(defn ^{web/path "index.html"
         web/content-type "text/html"
         :title "Index"}
   index-html []

@@ -14,7 +14,7 @@
 ;;
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
-(ns plugboard.demos.query-params.test-responses
+(ns plugboard.demos.hello-world.test-responses
   (:use
    clojure.test compojure.core
    plugboard.demos.jetty-fixture
@@ -30,8 +30,10 @@
 
 (use-fixtures :once (make-fixture main-routes))
 
+;; TODO: Test welcome page functionality separately
+
 (deftest test-demo
-  (let [response (http/get (format "http://localhost:%d/hello-world/" (get-jetty-port)))
+  (let [response (http/get (format "http://localhost:%d/hello-world/index.html" (get-jetty-port)))
         doc (body-zip response)]
     (is (= 200 (get response :status)))
     (is (= "Hello World!" (xml1-> doc :body :h1 text)))

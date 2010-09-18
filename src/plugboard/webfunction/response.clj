@@ -45,11 +45,11 @@
   )
 
 (defn webfn-matches-path? [path webfn]
-  (let [uri (get (meta webfn) web/uri)]
+  (let [p (get (meta webfn) web/path)]
     (cond
-     (nil? uri) true                    ; it's a match if it's not specified.
-     (fn? uri) (not (nil? (uri path)))
-     (string? uri) (= uri path)
+     (nil? p) true                    ; it's a match if it's not specified.
+     (fn? p) (not (nil? (p path)))
+     (string? p) (= p path)
      :otherwise false))
   )
 

@@ -24,7 +24,7 @@
    )
   )
 
-(defn ^{web/uri "/basic-auth/index.html"
+(defn ^{web/path "index.html"
         web/content-type "text/html"
         :title "Basic-Auth demo"}
   index-html []
@@ -34,7 +34,7 @@
     " - the user id is 'scott', the password is 'tiger'."]
    ))
 
-(defn ^{web/uri "/basic-auth/secret-place.html"
+(defn ^{web/path "secret-place.html"
         web/content-type "text/html"
         :title "Secret place"}
   secret-place-html []
@@ -42,7 +42,7 @@
    [:p "Congratulations, you have passed into the secret place."]
    ))
 
-(defn ^{web/uri "/basic-auth/secret-place.html"
+(defn ^{web/path "secret-place.html"
         web/content-type "text/html"
         web/status 401
         :title "No goodies for you"}

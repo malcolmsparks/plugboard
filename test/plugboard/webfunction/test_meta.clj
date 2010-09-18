@@ -30,13 +30,13 @@
 
   (clojure.core/refer-clojure)
   
-  (defn ^{plugboard.webfunction.webfunction/uri "index.html"
+  (defn ^{plugboard.webfunction.webfunction/path "index.html"
           plugboard.webfunction.webfunction/content-type "text/html"
           plugboard.webfunction.webfunction/title "Index"}
     rep1 []
     (+ 2 2))
 
-  (defn ^{plugboard.webfunction.webfunction/uri "content.html"
+  (defn ^{plugboard.webfunction.webfunction/path "content.html"
           plugboard.webfunction.webfunction/content-type "text/html"
           plugboard.webfunction.webfunction/title "Index"}
     rep2 []

@@ -18,11 +18,11 @@
 
 ;; Define keys
 
-(def ^{:private true} _uri nil)
-(def uri (var _uri))
-
 (def ^{:private true} _status nil)
 (def status (var _status))
+
+(def ^{:private true} _path nil)
+(def path (var _path))
 
 (def ^{:private true} _content-type nil)
 (def content-type (var _content-type))

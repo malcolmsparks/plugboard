@@ -24,7 +24,7 @@
    )
   )
 
-(defn ^{web/uri "/hello-world/index.html"
+(defn ^{web/path "index.html"
         web/content-type "text/html"
         :title "Hello World!"}
   index-html []

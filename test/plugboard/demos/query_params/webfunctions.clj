@@ -24,7 +24,7 @@
    )
   )
 
-(defn ^{web/uri "/query-params/index.html"
+(defn ^{web/path "index.html"
         web/content-type "text/html"
         :title "Query parameters"}
   index-html []
@@ -48,7 +48,7 @@
    :otherwise "a")
   )
 
-(defn ^{web/uri "/query-params/query.html"
+(defn ^{web/path "query.html"
         web/content-type "text/html"
         :title "Query parameters - result"}
   query-html []

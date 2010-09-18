@@ -24,7 +24,7 @@
    )
   )
 
-(defn ^{web/uri "/forms/index.html"
+(defn ^{web/path "index.html"
         web/content-type "text/html"
         :title "Forms demo"}
   index-html []
@@ -35,12 +35,12 @@
     [:input {:type "submit"}]
     ]))
 
-(defn ^{web/uri "/forms/submit.html"}
+(defn ^{web/path "submit.html"}
   submit-html []
   "Thanks. You shouldn't see this, because the redirect should have kicked in."
   )
 
-(defn ^{web/uri "/forms/new-resource.html"}
+(defn ^{web/path "new-resource.html"}
   new-resource-html []
   "This is your new resource. TODO: let's add it to memory in submit.html so we can display it here."
   )

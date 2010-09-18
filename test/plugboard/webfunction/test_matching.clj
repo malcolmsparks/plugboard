@@ -29,17 +29,17 @@
 
   (clojure.core/refer-clojure)
   
-  (defn ^{plugboard.webfunction.webfunction/uri "/index.html"
+  (defn ^{plugboard.webfunction.webfunction/path "index.html"
           plugboard.webfunction.webfunction/content-type "text/html"}
     rep1 []
     (+ 2 2))
 
-  (defn ^{plugboard.webfunction.webfunction/uri "/index.html"
+  (defn ^{plugboard.webfunction.webfunction/path "index.html"
           plugboard.webfunction.webfunction/content-type "application/xml"}
     rep2 []
     (+ 2 2))
 
-  (defn ^{plugboard.webfunction.webfunction/uri "/content.html"
+  (defn ^{plugboard.webfunction.webfunction/path "content.html"
           plugboard.webfunction.webfunction/content-type "application/xml"}
     rep3 []
     (+ 2 2))
@@ -49,7 +49,7 @@
 
   (clojure.core/refer-clojure)
   
-  (defn ^{plugboard.webfunction.webfunction/uri "/index.html"
+  (defn ^{plugboard.webfunction.webfunction/path "index.html"
           plugboard.webfunction.webfunction/content-type "text/html"}
     rep1 []
     (+ 2 2))
@@ -57,13 +57,13 @@
   )
 
 (deftest test-index-html-matches-two-web-functions
-  (is (webfn-matches-path? "/index.html" (get (ns-publics testing-ns1) 'rep1)))
-  (is (webfn-matches-path? "/index.html" (get (ns-publics testing-ns1) 'rep2)))
-  (is (not (webfn-matches-path? "/index.html" (get (ns-publics testing-ns1) 'rep3))))
+  (is (webfn-matches-path? "index.html" (get (ns-publics testing-ns1) 'rep1)))
+  (is (webfn-matches-path? "index.html" (get (ns-publics testing-ns1) 'rep2)))
+  (is (not (webfn-matches-path? "index.html" (get (ns-publics testing-ns1) 'rep3))))
   )
 
 (deftest test-get-matching-webfunctions-for-path
-  (is (= 2 (count (get-matching-webfunctions-for-path "/index.html" [testing-ns1]))))
-  (is (= 1 (count (get-matching-webfunctions-for-path "/content.html" [testing-ns1]))))
-  (is (= 3 (count (get-matching-webfunctions-for-path "/index.html" [testing-ns1 testing-ns2]))))
+  (is (= 2 (count (get-matching-webfunctions-for-path "index.html" [testing-ns1]))))
+  (is (= 1 (count (get-matching-webfunctions-for-path "content.html" [testing-ns1]))))
+  (is (= 3 (count (get-matching-webfunctions-for-path "index.html" [testing-ns1 testing-ns2]))))
   )
