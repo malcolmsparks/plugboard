@@ -14,7 +14,7 @@
 ;;
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
-(ns plugboard.demos.links.test-responses
+(ns plugboard.demos.status-views.test-responses
   (:use
    clojure.test
    compojure.core
@@ -23,21 +23,41 @@
   (:require
    [clj-http.client :as http]
    plugboard.demos.links.configuration
+   clj-http.core
    )
   )
 
 (defroutes main-routes
-  (GET "/links/*" []
-       (create-handler (plugboard.demos.links.configuration/create-plugboard))))
+  (GET "/status-views/*" []
+       (create-handler (plugboard.demos.status-views.configuration/create-plugboard))))
 
 (use-fixtures :once (make-fixture main-routes))
 
+;; This is copied from clj-http.client but we exceptions removed.
+(def request
+  (-> #'clj-http.core/request
+    http/wrap-redirects
+;;    wrap-exceptions
+    http/wrap-decompression
+    http/wrap-input-coercion
+    http/wrap-output-coercion
+    http/wrap-query-params
+    http/wrap-basic-auth
+    http/wrap-accept
+    http/wrap-accept-encoding
+    http/wrap-content-type
+    http/wrap-method
+    http/wrap-url))
+
+(defn webget
+  "Like #'request, but sets the :method and :url as appropriate."
+  [url & [req]]
+  (request (merge req {:method :get :url url})))
+
 (deftest test-demo
-  (let [response (http/get (format "http://localhost:%d/links/index.html" (get-jetty-port)))
-        doc (body-zip response)]
-    (is (= 200 (get response :status)))
-    ;; TODO: Find the link and 'click' on it. This will require some kind of
-    ;; client robot test DSL which is able to check the contents of pages, divs,
-    ;; tables, etc.. along with the ability to post forms and click on links.
+  (let [response (webget (format "http://localhost:%d/status-views/missing.html" (get-jetty-port)))
+;;        doc (body-zip response)
+        ]
+    (is (= 404 (get response :status)))
     )
   )

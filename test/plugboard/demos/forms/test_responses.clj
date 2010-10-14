@@ -16,7 +16,8 @@
 
 (ns plugboard.demos.forms.test-responses
   (:use
-   clojure.test compojure.core
+   clojure.test
+   compojure.core
    plugboard.demos.jetty-fixture
    clojure.contrib.zip-filter.xml
    plugboard.util)
