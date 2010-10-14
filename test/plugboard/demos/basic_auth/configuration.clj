@@ -16,7 +16,7 @@
 
 (ns plugboard.demos.basic-auth.configuration
   (:require
-   (plugboard.webfunction plugboards response)
+   plugboard.webfunction.plugboards
    plugboard.core.plugboard
    plugboard.demos.basic-auth.webfunctions
    )

@@ -16,7 +16,7 @@
 
 (ns plugboard.demos.status-views.configuration
   (:require
-   (plugboard.webfunction plugboards response)
+   plugboard.webfunction.plugboards
    plugboard.core.plugboard
    plugboard.demos.status-views.webfunctions
    )

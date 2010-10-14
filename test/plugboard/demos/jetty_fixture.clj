@@ -27,7 +27,7 @@
 
 (defn create-handler [plugboard]
   (fn [req]
-    (plugboard.webfunction.response/get-response req plugboard)
+    (plugboard.webfunction.plugboards/get-response req plugboard)
     ))
 
 (defn run-jetty [routes]

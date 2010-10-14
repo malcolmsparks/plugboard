@@ -16,7 +16,7 @@
 
 (ns plugboard.demos.forms.configuration
   (:require
-   (plugboard.webfunction plugboards response)
+   plugboard.webfunction.plugboards
    plugboard.core.plugboard
    plugboard.demos.forms.webfunctions
    )

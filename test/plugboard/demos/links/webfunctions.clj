@@ -15,9 +15,6 @@
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
 (ns plugboard.demos.links.webfunctions
-  (:use
-   plugboard.webfunction.context
-   )
   (:require
    [plugboard.webfunction.webfunction :as web]
    [hiccup.core :as hiccup]
@@ -30,12 +27,12 @@
   index-html []
   (hiccup/html
    [:html
-    [:head [:title (get-meta :title)]]
+    [:head [:title (web/get-meta :title)]]
     [:body
-     [:h1 (get-meta :title)]
+     [:h1 (web/get-meta :title)]
      [:p
       "Here is a link to "
-      [:a {:href (create-uri "other.html")} "another page"]
+      [:a {:href (web/create-uri "other.html")} "another page"]
       "."
       ]
      ]]))
@@ -46,9 +43,9 @@
   other-html []
   (hiccup/html
    [:html
-    [:head [:title (get-meta :title)]]
+    [:head [:title (web/get-meta :title)]]
     [:body
-     [:h1 (get-meta :title)]
+     [:h1 (web/get-meta :title)]
      [:p "You arrived safely at the correct page."]
      ]]))
 

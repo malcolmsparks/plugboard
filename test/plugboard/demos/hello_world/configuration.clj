@@ -16,7 +16,7 @@
 
 (ns plugboard.demos.hello-world.configuration
   (:require
-   (plugboard.webfunction plugboards response)
+   plugboard.webfunction.plugboards
    plugboard.core.plugboard
    plugboard.demos.hello-world.webfunctions
    )

@@ -17,7 +17,6 @@
 (ns plugboard.webfunction.plugboards
   (:use clojure.contrib.trace)
   (:require [plugboard.webfunction.webfunction :as web]
-            plugboard.webfunction.selectors
             [clojure.contrib.condition :as condition]
             [plugboard.core.plugboard :as plugboard]
             clojure.contrib.base64
@@ -34,6 +33,110 @@
  ^{:doc "The location of the newly appended resource. Used for redirects."}
  new-location (var _newlocation))
 
+;; --------------------------------------------------------------------------------
+
+
+(defn is-web-namespace? [ns]
+  (= (find-ns 'plugboard.webfunction.webfunction) ns)
+  )
+
+(defn is-web-function? [f]
+  (-> f
+      (meta)
+      (keys)
+      ((partial filter var?))
+      ((partial map meta))
+      ((partial map :ns))
+      ((partial filter is-web-namespace?))
+      (empty?)
+      (not)))
+
+(defn get-web-functions [ns]
+  (-> ns
+      (ns-publics)
+      ((partial map second))
+      ((partial filter is-web-function?))
+      ))
+
+;; --------------------------------------------------------------------------------
+
+(defn ^{:doc "Get the content type from the web function metadata"}
+  get-content-type [webfn]
+  (if-let [ct (get (meta webfn) web/content-type)]
+    {"Content-Type" ct}
+    {})
+    )
+
+(defn get-headers-from-webfn [webfn]
+  (get-content-type [webfn])
+  )
+
+(defn get-body [status request webfn]
+  (if (not (nil? webfn))
+    (with-bindings {(var web/*web-context*)
+                    {:status status :request request :meta (meta webfn)}}
+      (webfn))))
+
+(defn initialize-state [req]
+  {:request req :response {:headers {}}}
+  )
+
+(defn- webfn-matches-path-or-nil? [path webfn]
+  (let [p (get (meta webfn) web/path)]
+    (cond
+     (nil? p) true                    ; it's a match if it's not specified.
+     (fn? p) (true? (p path))
+     (string? p) (= p path)
+     :otherwise false))
+  )
+
+(defn- webfn-matches-status? [status webfn]
+  (let [s (get (meta webfn) web/status)]
+    (cond
+     (fn? s) (true? (s status))
+     (number? s) (= s status)
+     ;; if there is no status declared we select the function if the
+     ;; status is not an error.
+     :otherwise (< status 400))) 
+  )
+
+(defn- webfn-matches? [path status webfn]
+  (and
+   (webfn-matches-path-or-nil? path webfn)
+   (webfn-matches-status? status webfn)
+   )
+  )
+
+(defn get-matching-webfunctions [path status namespaces]
+  (mapcat
+   (fn [web-ns]
+     (filter #(webfn-matches? path status %)
+             (plugboard.webfunction.plugboards/get-web-functions
+              web-ns)))
+   namespaces)
+  )
+
+(defn get-response [req plugboard]
+  (let [[status state] (plugboard/get-status-with-state plugboard
+                         (initialize-state req))
+        namespaces (get state web-namespaces)
+        webfns (get-matching-webfunctions (get state plugboard/path) status namespaces)
+        webfn (first webfns)
+        headers (merge (get-in state [:response :headers] (get-headers-from-webfn webfn)))
+        body (get-body status req webfn)
+        ]
+    (if (map? body)
+      {:status status :headers (merge headers (:headers body)) :body (:body body)}
+      {:status status :headers headers :body body}
+      )
+    ))
+
+;; This creates a handler that can be wrapped in ring middleware.
+(defn create-response-handler [plugboard]
+  (fn [req]
+    (get-response req plugboard)))
+
+;; --------------------------------------------------------------------------------
 
 ;; This is almost identical to
 ;; plugboard.webfunction.response/webfn-matches-path? but doesn't
@@ -51,7 +154,7 @@
   (mapcat
    (fn [web-ns]
      (filter #(webfn-matches-path? path %)
-             (plugboard.webfunction.selectors/get-web-functions
+             (plugboard.webfunction.plugboards/get-web-functions
               web-ns)))
    web-namespaces)
   )
@@ -103,7 +206,7 @@
                 (contains? (get-in state [:request :headers]) "authorization")
                 (compare-secret encoded (get-in state [:request :headers "authorization"])))]
            (if res true 
-               [false (plugboard.webfunction.plugboards/set-header state "WWW-Authenticate" (format "Basic realm=\"%s\"" realm))])
+               [false (set-header state "WWW-Authenticate" (format "Basic realm=\"%s\"" realm))])
            )
          true
          )))})

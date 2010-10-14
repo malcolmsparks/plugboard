@@ -15,9 +15,6 @@
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
 (ns plugboard.demos.query-params.webfunctions
-  (:use
-   plugboard.webfunction.context
-   )
   (:require
    [plugboard.webfunction.webfunction :as web]
    [hiccup.core :as hiccup]
@@ -30,9 +27,9 @@
   index-html []
   (hiccup/html
    [:html
-    [:head [:title (get-meta :title)]]
+    [:head [:title (web/get-meta :title)]]
     [:body
-     [:h1 (get-meta :title)]
+     [:h1 (web/get-meta :title)]
      (map (fn [coffee]
             (let [href (format "query.html?coffee=%s" coffee)]
               [:p [:a {:href href} href]]))
@@ -52,10 +49,10 @@
         web/content-type "text/html"
         :title "Query parameters - result"}
   query-html []
-  (let [coffee (get-query-param "coffee")]
+  (let [coffee (web/get-query-param "coffee")]
     (hiccup/html
      [:html
-      [:head [:title (get-meta :title)]]
+      [:head [:title (web/get-meta :title)]]
       [:body
        [:h1 (format "You chose %s %s" (article coffee) coffee)]
        ]])

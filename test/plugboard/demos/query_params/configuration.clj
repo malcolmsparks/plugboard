@@ -16,7 +16,7 @@
 
 (ns plugboard.demos.query-params.configuration
   (:require
-   (plugboard.webfunction plugboards response)
+   plugboard.webfunction.plugboards
    plugboard.core.plugboard
    plugboard.demos.query-params.webfunctions
    )

@@ -15,9 +15,6 @@
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
 (ns plugboard.demos.forms.webfunctions
-  (:use
-   plugboard.webfunction.context
-   )
   (:require
    [plugboard.webfunction.webfunction :as web]
    [hiccup.core :as hiccup]
@@ -34,7 +31,7 @@
   index-html []
   (hiccup/html
    [:body
-    [:h1 (get-meta :title)]
+    [:h1 (web/get-meta :title)]
 
     (if (> (count @favorites) 0)
       [:h2 "Current favorites"])
@@ -57,9 +54,9 @@
 
 (defn ^{web/path "submit.html"}
   submit-html []
-  (let [key (get-form-param "key")
-        value (get-form-param "value")
-        new-resource-uri (create-uri (format  "resources/%s/resource.html" key))]
+  (let [key (web/get-form-param "key")
+        value (web/get-form-param "value")
+        new-resource-uri (web/create-uri (format  "resources/%s/resource.html" key))]
     (dosync (alter favorites assoc key value))
     {:headers {"Location" new-resource-uri}
      :body
@@ -73,7 +70,7 @@
                    )}
   resource-html []
   (hiccup/html
-   (let [key (get (match-document-route (get-path)) "key")
+   (let [key (get (match-document-route (web/get-path)) "key")
          value (get @favorites key)]
 
      [:body

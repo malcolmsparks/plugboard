@@ -15,9 +15,6 @@
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
 (ns plugboard.demos.status-views.webfunctions
-  (:use
-   plugboard.webfunction.context
-   )
   (:require
    [plugboard.webfunction.webfunction :as web]
    [hiccup.core :as hiccup]
@@ -29,7 +26,7 @@
         :title "Index"}
   index-html []
   (hiccup/html
-   [:h1 (get-meta :title)]
+   [:h1 (web/get-meta :title)]
    [:p "Click on this " [:a {:href "missing.html"} "missing link"] "."]
    ))
 
@@ -38,5 +35,5 @@
         :title "Not found!"}
   not-found-html []
   (hiccup/html
-   [:h1 (get-meta :title)]
+   [:h1 (web/get-meta :title)]
    [:p "Oh dear. Your page couldn't be found."])) ; TODO: Indicate page in response.

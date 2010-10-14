@@ -15,9 +15,6 @@
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
 (ns plugboard.demos.basic-auth.webfunctions
-  (:use
-   plugboard.webfunction.context
-   )
   (:require
    [plugboard.webfunction.webfunction :as web]
    [hiccup.core :as hiccup]
@@ -29,7 +26,7 @@
         :title "Basic-Auth demo"}
   index-html []
   (hiccup/html
-   [:h1 (get-meta :title)]
+   [:h1 (web/get-meta :title)]
    [:p [:a {:href "secret-place.html"} "Click here"]
     " - the user id is 'scott', the password is 'tiger'."]
    ))
@@ -48,6 +45,6 @@
         :title "No goodies for you"}
   unauthorized-secret-place-html []
   (hiccup/html
-   [:h1 (get-meta :title)]
+   [:h1 (web/get-meta :title)]
    [:p "Bad luck you failed."]
   ))

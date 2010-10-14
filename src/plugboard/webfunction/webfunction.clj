@@ -32,9 +32,45 @@
 
 ;; Context functions
 
-(def *context* nil)
+(def *web-context* nil)
 
-(defn get-title []
-  (get-in *context* [:meta title])
+(defn get-status []
+  (get *web-context* :status)
+  )
+
+(defn ^{:doc "Create an absolute URI from the relative path. This allows web
+  applications to be agnostic about where they exist in a contextual uri tree
+  while still being able to create absolute URIs. Hence the context of the web
+  application does not have to be encoded in the source code of the web
+  application."}
+  create-uri [path]
+  (let [uri (get *web-context* [:request :uri])
+        curr (get *web-context* [:request :route-params "*"])
+        ]
+    (str (apply str (take (- (count uri) (count curr)) uri)) path)
+    ))
+
+(defn get-request []
+  (get *web-context* :request)
+  )
+
+(defn get-path []
+  (get-in *web-context* [:request :route-params "*"])
+  )
+
+(defn get-request-body []
+  (get-in *web-context* [:request :body])
+  )
+
+(defn get-meta [k]
+  (get-in *web-context* [:meta k])
+  )
+
+(defn get-query-param [k]
+  (get-in *web-context* [:request :query-params k])
+  )
+
+(defn get-form-param [k]
+  (get-in *web-context* [:request :form-params k])
   )
 

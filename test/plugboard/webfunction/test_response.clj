@@ -18,12 +18,12 @@
   (:use
    clojure.test
    clojure.contrib.with-ns
-   plugboard.webfunction.response
    ring.middleware.params
    )
   (:require
    [plugboard.core.plugboard :as plugboard]
    plugboard.webfunction.plugboards
+   plugboard.webfunction.webfunction
    [hiccup.core :as hiccup]
    [clojure.xml :as xml]
    [clojure.zip :as zip]
@@ -46,8 +46,8 @@
     rep1 []
     (hiccup.core/html
      [:body
-      [:h1  (plugboard.webfunction.context/get-meta :title)]
-      [:p#query-param (plugboard.webfunction.context/get-query-param "fish")]
+      [:h1  (plugboard.webfunction.webfunction/get-meta :title)]
+      [:p#query-param (plugboard.webfunction.webfunction/get-query-param "fish")]
       ]
      )
     )
@@ -56,7 +56,7 @@
 (deftest test-content-type
   (is (= "text/html"
          (get
-          (get-content-type (get (ns-publics testing-ns) 'rep1))
+          (plugboard.webfunction.plugboards/get-content-type (get (ns-publics testing-ns) 'rep1))
           "Content-Type"))))
 
 (def plugboard
@@ -76,7 +76,7 @@
 )
   
 (deftest test-index-response
-  (let [handler (wrap-params (create-response-handler plugboard) :query-string)
+  (let [handler (wrap-params (plugboard.webfunction.plugboards/create-response-handler plugboard) :query-string)
         response (handler request)
         doc (zip/xml-zip (xml/parse
                           (org.xml.sax.InputSource.

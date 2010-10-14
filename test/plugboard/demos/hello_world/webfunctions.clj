@@ -15,9 +15,6 @@
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
 (ns plugboard.demos.hello-world.webfunctions
-  (:use
-   plugboard.webfunction.context
-   )
   (:require
    [plugboard.webfunction.webfunction :as web]
    [hiccup.core :as hiccup]
@@ -30,8 +27,8 @@
   index-html []
   (hiccup/html
    [:html
-    [:head [:title (get-meta :title)]]
+    [:head [:title (web/get-meta :title)]]
     [:body
-     [:h1 (get-meta :title)]
+     [:h1 (web/get-meta :title)]
      [:p "Congratulations. Plugboard is working."]
      ]]))
