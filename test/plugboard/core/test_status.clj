@@ -39,6 +39,14 @@
   )
 
 (deftest test-can-override-resource-exists
-  (is (= 200 (get-status (merge-plugboards default-wiring {:C7 true})
+  (is (= 200 (get-status (merge-plugboards default-wiring {:G7 true})
                          {:request {:request-method :get}}))))
 
+
+(deftest test-header-exists
+  (is (true? ((header-exists? "foo") {:request {:headers {"foo" "bar"}}} nil)))
+  )
+
+(deftest test-if-match-wildcard
+  (is (true? ((header-is? "foo" "bar") {:request {:headers {"foo" "bar"}}} nil)))
+  )

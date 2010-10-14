@@ -28,69 +28,114 @@
 
 (def transition-map
      {
-      [:B1 false] 503
-      [:B1 true] :B2
-      [:B2 false] :B3
-      [:B2 true] 414
-      [:B3 false] :B4
-      [:B3 true] 400
-      [:B4 false] 401
-      [:B4 true] :B5
-      [:B5 false] :B6
-      [:B5 true] 403
-      [:B6 false] :B7
-      [:B6 true] 200
-      [:B7 false] :B8
-      [:B7 true] :C7
-      [:B8 false] 501
-      [:B8 true] 405
-      [:C2 false] :D2
-      [:C2 true] 412
-      [:C7 false] :C2
-      [:C7 true] :C8
-      [:C8 false] :D9
-      [:C8 true] :C9
-      [:C9 true] :D9
-      [:D2 false] :D4
-      [:D4 false] :G4
+      [:B3 false] :C3
+      [:B3 true] 200
+      [:B4 false] :B3
+      [:B4 true] 413
+      [:B5 false] :B4
+      [:B5 true] 415
+      [:B6 false] :B5
+      [:B6 true] 501
+      [:B7 false] :B6
+      [:B7 true] 403
+      [:B8 false] 401
+      [:B8 true] :B7
+      [:B9 false] :B8
+      [:B9 true] 400
+      [:B10 false] 405
+      [:B10 true] :B9
+      [:B11 false] :B10
+      [:B11 true] 414
+      [:B12 false] 501
+      [:B12 true] :B11
+      [:B13 false] 503
+      [:B13 true] :B12
+      [:C3 false] :D4
+      [:C3 true] :C4
+      [:C4 false] 406
+      [:C4 true] :D4
       [:D4 true] :D5
-      [:D5 false] :E5
-      [:D5 true] 301
-      [:D9 false] :E9
-      [:E9 false] :G10
-      [:G4 false] 404
-      [:G4 true] :H4
-      [:G10 false] :H13
-      [:H4 false] 404
-      [:H4 true] :J4
-      [:H13 false] :H15
-      [:H13 true] :I13
-      [:H15 false] :H18
-      [:H18 false] :H19
-      [:H19 true] :H20
-      [:H20 false] :I21
-      [:I13 false] :J13
-      [:I21 false] :J22
-      [:J4 false] 501
-      [:J4 true] :L4
-      [:J13 true] :L13
-      [:J22 false] :K23
-      [:K23 false] :L24
-      [:L4 false] 500
-      [:L4 true] :M4
-      [:L13 false] 500
-      [:L13 true] :M13
-      [:L24 false] :M24
-      [:M2 false] 201
-      [:M2 true] 303
-      [:M4 false] :M11
-      [:M4 true] :M2
-      [:M11 true] 200
-      [:M13 false] :M11
-      [:M13 true] :M14
-      [:M14 false] 204
-      [:M14 true] 303
-      [:M24 true] 200
+      [:D4 false] :E5
+      [:D5 false] 406
+      [:D5 true] :E5
+      [:E5 false] :F6
+      [:E5 true] :E6
+      [:E6 false] 406
+      [:E6 true] :F6
+      [:F6 false] :G7
+      [:F6 true] :F7
+      [:F7 false] 406
+      [:F7 true] :G7
+      [:G7 false] :H7
+      [:G7 true] :G8
+      [:G8 false] :H10
+      [:G8 true] :G9
+      [:G9 false] :G11
+      [:G9 true] :H10
+      [:G11 false] 412
+      [:G11 true] :H10
+      [:H7 false] :I7
+      [:H7 true] 412
+      [:H10 false] :I12
+      [:H10 true] :H11
+      [:H11 false] :I12
+      [:H11 true] :H12
+      [:H12 false] :I12
+      [:H12 true] 412
+      [:I4 false] :P3
+      [:I4 true] 301
+      [:I7 false] :K7
+      [:I7 true] :I4
+      [:I12 false] :L13
+      [:I12 true] :I13
+      [:I13 false] :K13
+      [:I13 true] :J18
+      [:J18 false] 412
+      [:J18 true] 304
+      [:K5 false] :L5
+      [:K5 true] 301
+      [:K7 false] :L7
+      [:K7 true] :K5
+      [:K13 false] :L13
+      [:K13 true] :J18
+      [:L5 false] :M5
+      [:L5 true] 307
+      [:L7 false] 404
+      [:L7 true] :M7
+      [:L13 false] :M16
+      [:L13 true] :L14
+      [:L14 false] :M16
+      [:L14 true] :L15
+      [:L15 false] :L17
+      [:L15 true] :M16
+      [:L17 false] 304
+      [:L17 true] :M16
+      [:M5 false] 410
+      [:M5 true] :N5
+      [:M7 false] 404
+      [:M7 true] :N11
+      [:M16 false] :N16
+      [:M16 true] :M20
+      [:M20 false] 202
+      [:M20 true] :O20
+      [:N5 false] 410
+      [:N5 true] :N11
+      [:N11 false] :P11
+      [:N11 true] 303
+      [:N16 false] :O16
+      [:N16 true] :N11
+      [:O14 false] :N11
+      [:O14 true] 409
+      [:O16 false] :O18
+      [:O16 true] :O14
+      [:O18 false] 200
+      [:O18 true] 300
+      [:O20 false] 204
+      [:O20 true] :O18
+      [:P3 false] :P11
+      [:P3 true] 409
+      [:P11 false] :O20
+      [:P11 true] 201
       })
 
 (defn is-web-method? [& candidates]
@@ -104,43 +149,66 @@
     (contains? (get-in state [:request :headers]) header)
     ))
 
+(defn header-is? [header expected]
+  (fn [state dlg]
+    (= (get-in state [:request :headers header]) expected)
+    ))
+
 (def default-wiring
      {
-      :B1 true
-      :B2 false
-      :B3 false
-      :B4 true
+      :B3 (is-web-method? :options)
+      :B4 false
       :B5 false
-      :B6 (is-web-method? :options)
-      :B7 (is-web-method? :delete :get :head :put :post)
-      :B8 (is-web-method? :trace :connect)
-      :C2 (header-exists? "If-Match")
-      :C7 false ; Key junction - does the resource exist?
-      :C8 false
-      :C9 true
-      :D2 (is-web-method? :put)
-      :D4 false
-      :D9 false
-      :E9 false
-      :G4 (is-web-method? :post)
-      :G10 false
-      :H4 false
-      :H13 (is-web-method? :post)
-      :H15 (is-web-method? :put)
-      :H18 (is-web-method? :delete)
-      :H19 (is-web-method? :get :head)
-      :H20 false
-      :I13 false
-      :I21 false
-      :J13 true
-      :J22 false
-      :K23 false
-      :L13 false
-      :L24 false
-      :M11 true
-      :M13 (fn [state dlg] (string? (get state :location)))
-      :M14 true
-      :M24 true
+      :B6 false
+      :B7 false
+      :B8 true
+      :B9 false
+      :B10 true
+      :B11 false
+      :B12 true
+      :B13 true
+      :C3 (header-exists? "Accept")
+      :C4 false
+      :D4 (header-exists? "Accept-Language")
+      :D5 false
+      :E5 (header-exists? "Accept-Charset")
+      :E6 false
+      :F6 (header-exists? "Accept-Encoding")
+      :F7 false
+      :G7 false
+      :G8 (header-exists? "If-Match")
+      :G9 nil
+      :G11 nil
+      :H7 (header-exists? "If-Match")
+      :H10 (header-exists? "If-Unmodified-Since")
+      :H11 nil
+      :H12 nil
+      :I4 false
+      :I7 (is-web-method? :put)
+      :I12 (header-exists? "If-None-Match") ; TODO: Value cannot be *
+      :I13 (header-exists? "If-None-Match") ; TODO: Value must be *
+      :J18 nil
+      :K5 nil
+      :K7 false
+      :K13 nil
+      :L5 nil
+      :L7 (is-web-method? :post)
+      :L13 (header-exists? "If-Modified-Since")
+      :L14 nil
+      :L15 nil
+      :L17 nil
+      :M5 nil
+      :M7 nil
+      :M16 (is-web-method? :delete)
+      :M20 nil
+      :N5 nil
+      :N11 nil
+      :N16 (is-web-method? :post)
+      :O16 (is-web-method? :put)
+      :O18 false
+      :O20 nil
+      :P3 nil
+      :P11 nil
       })
 
 ;; ------------------------ Construction
@@ -163,31 +231,31 @@
   (or (true? b) (false? b)))
 
 (defn lookup-decision [plugboard step]
-  (let [res (plugboard step)]
+  (let [res (get plugboard step)]
     (if (nil? res)
       (throw (Exception. (format "No decision for step: %s" step)))
       res)))
 
 (defn lookup-next [tuple]
-  (let [res (transition-map tuple)]
+  (let [res (get transition-map tuple)]
     (if (nil? res)
       (throw (Exception. (format "No transition for tuple: %s" tuple)))
       res)))
 
 ; Returns [boolean state] decision
-(defn- decide [state t dlg]
+(defn- decide [state f dlg]
   (cond
-   (fn? t) (let [res (t state dlg)]
+   (fn? f) (let [res (f state dlg)]
              (if 
                  (vector? res) res
                  [res state])
                  )
-   :otherwise [t state]
+   :otherwise [f state]
    ))
 
 ; Returns [boolean state]
-(defn- decides [state l]
-  (decide state (first l) (fn [state] (decides state (rest l))))
+(defn- decides [state stack]
+  (decide state (first stack) (fn [state] (decides state (rest stack))))
   )
 
 (defn ^{:doc "Get the result of the given layer of plug functions. We reverse
@@ -196,14 +264,17 @@
         list to override the preceeding elements because that is the convention
         already established by the merge function. Reversing this convention
         would confuse developers already familiar with Clojure conventions."  }
-        get-plug-decision [state l]
-  (decides state (reverse l))
+        get-plug-decision [state stack]
+  (decides state (reverse stack))
   )
 
 ;; Returns [next-junction new-state]
 (defn perform-junction [junction plugboard state]
   (let [[decision new-state] (get-plug-decision state (get plugboard junction))]
-    [(lookup-next [junction decision]) new-state])
+    (if (nil? decision) (throw (Exception. (format "No decision at junction %s" junction))))
+    (let [next (lookup-next [junction decision])]
+      ;;(println (format "%s -> %s -> %s" junction decision next))
+      [next new-state]))
   )
 
 ;; Ultimately returns [status state]
@@ -221,9 +292,10 @@
     ))
 
 ;; Ultimately returns [status state]
+;; B13 is the start state.
 (defn get-status-with-state [plugboard state]
   (let [[status new-state]
-        (trampoline flow-junction :B1 plugboard (initialize-state plugboard state))]
+        (trampoline flow-junction :B13 plugboard (initialize-state plugboard state))]
     [status new-state]
     ))
 

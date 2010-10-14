@@ -22,10 +22,6 @@
    )
   )
 
-(defn appender [state]
-  "new-resource.html"
-  )
-
 (defn create-plugboard []
   (plugboard.core.plugboard/merge-plugboards
 
@@ -39,9 +35,9 @@
 
    ;; Here we add a simple plugboard combinator that adds welcome page
    ;; behaviour when the uri ends in a slash.
+   ;; This could be getting in the way of the functionality
    (plugboard.webfunction.plugboards/welcome-page "index.html")
 
-   ;; Here we add the appender which creates the new resource and returns its location.
-   (plugboard.webfunction.plugboards/redirecting-appender appender)
+   (plugboard.webfunction.plugboards/redirect-to-new-resource)
 
    ))

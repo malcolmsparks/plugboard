@@ -15,6 +15,7 @@
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
 (ns plugboard.webfunction.response
+  (:use clojure.contrib.trace)
   (:require [plugboard.webfunction.webfunction :as web]
             [plugboard.webfunction.context :as context]
             [plugboard.core.plugboard :as plugboard]
@@ -48,17 +49,19 @@
   (let [p (get (meta webfn) web/path)]
     (cond
      (nil? p) true                    ; it's a match if it's not specified.
-     (fn? p) (not (nil? (p path)))
+     (fn? p) (true? (p path))
      (string? p) (= p path)
      :otherwise false))
   )
 
 (defn webfn-matches-status? [status webfn]
-  (let [s (or (get (meta webfn) web/status) 200)]
+  (let [s (get (meta webfn) web/status)]
     (cond
      (fn? s) (true? (s status))
      (number? s) (= s status)
-     :otherwise false))
+     ;; if there is no status declared we select the function if the
+     ;; status is not an error.
+     :otherwise (< status 400))) 
   )
 
 (defn webfn-matches? [path status webfn]
@@ -86,7 +89,10 @@
         headers (merge (get-in state [:response :headers] (get-headers-from-webfn webfn)))
         body (get-body status req webfn)
         ]
-    {:status status :headers headers :body body}
+    (if (map? body)
+      {:status status :headers (merge headers (:headers body)) :body (:body body)}
+      {:status status :headers headers :body body}
+      )
     ))
 
 ;; This creates a handler that can be wrapped in ring middleware.

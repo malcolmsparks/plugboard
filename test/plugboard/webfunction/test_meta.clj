@@ -62,4 +62,3 @@
 (deftest test-get-web-functions
   (is (= 2 (count (get-web-functions testing-ns))))
   )
-

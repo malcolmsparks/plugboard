@@ -21,6 +21,7 @@
    clojure.contrib.zip-filter.xml)
   (:require
    [clj-http.client :as http]
+   plugboard.demos.hello-world.configuration
    )
   )
 

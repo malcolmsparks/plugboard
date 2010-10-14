@@ -21,26 +21,64 @@
   (:require
    [plugboard.webfunction.webfunction :as web]
    [hiccup.core :as hiccup]
+   [clojure.java.io :as io]
+   [clout.core :as clout]
    )
   )
+
+(def favorites (ref {}))
 
 (defn ^{web/path "index.html"
         web/content-type "text/html"
         :title "Forms demo"}
   index-html []
   (hiccup/html
-   [:h1 (get-meta :title)]
-   [:form {:action "/forms/submit.html" :method "POST"}
-    [:input {:type "text"}]
-    [:input {:type "submit"}]
-    ]))
+   [:body
+    [:h1 (get-meta :title)]
+
+    (if (> (count @favorites) 0)
+      [:h2 "Current favorites"])
+    (map #(vector :p  [:a {:href (str "resources/" (first %) "/resource.html") } (first %) " - " (second %)])
+         @favorites)
+
+    [:h2 "Enter a new favorite"]
+
+    [:form {:action "/forms/submit.html" :method "POST"}
+     [:p "Thing: " [:input {:type "text" :name "key"}]]
+     [:p "Favorite: " [:input {:type "text" :name "value"}]]
+     [:p [:input {:type "submit"}]]
+     ]]))
+
+(def resource-route (clout/route-compile "resources/:key/resource.html"))
+
+(defn match-document-route [uri]
+  (clout/route-matches resource-route uri)
+  )
 
 (defn ^{web/path "submit.html"}
   submit-html []
-  "Thanks. You shouldn't see this, because the redirect should have kicked in."
-  )
+  (let [key (get-form-param "key")
+        value (get-form-param "value")
+        new-resource-uri (create-uri (format  "resources/%s/resource.html" key))]
+    (dosync (alter favorites assoc key value))
+    {:headers {"Location" new-resource-uri}
+     :body
+     (hiccup/html
+      [:body
+       [:p "Thanks. You shouldn't see this, because the redirect should have kicked in."]])}))
 
-(defn ^{web/path "new-resource.html"}
-  new-resource-html []
-  "This is your new resource. TODO: let's add it to memory in submit.html so we can display it here."
+(defn ^{web/path (fn [path]
+                   (let [key (get (match-document-route path) "key")]
+                     (not (nil? (find @favorites key))))
+                   )}
+  resource-html []
+  (hiccup/html
+   (let [key (get (match-document-route (get-path)) "key")
+         value (get @favorites key)]
+
+     [:body
+      [:p "Your favorite " key " is a " value]
+      ;; TODO: Construct with create-uri
+      [:a {:href "../../index.html"} "Back to form"] 
+      ]))
   )

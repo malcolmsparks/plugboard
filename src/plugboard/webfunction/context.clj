@@ -40,11 +40,23 @@
   (get *web-context* :request)
   )
 
+(defn get-path []
+  (get-in *web-context* [:request :route-params "*"])
+  )
+
+(defn get-request-body []
+  (get-in *web-context* [:request :body])
+  )
+
 (defn get-meta [k]
   (get-in *web-context* [:meta k])
   )
 
 (defn get-query-param [k]
   (get-in *web-context* [:request :query-params k])
+  )
+
+(defn get-form-param [k]
+  (get-in *web-context* [:request :form-params k])
   )
 

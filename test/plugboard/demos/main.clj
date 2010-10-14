@@ -25,6 +25,7 @@
    plugboard.demos.status-views.configuration
    plugboard.demos.basic-auth.configuration
    [compojure.route :as route]
+   ring.middleware.params
    ))
 
 (defn create-handler [plugboard]
@@ -41,7 +42,9 @@
   (GET "/links/*" []
        (create-handler (plugboard.demos.links.configuration/create-plugboard)))
   (ANY "/forms/*" []
-       (create-handler (plugboard.demos.forms.configuration/create-plugboard)))
+       ;; TODO: Ring just doesn't seem to be working - have to debug it.
+       (ring.middleware.params/wrap-params
+        (create-handler (plugboard.demos.forms.configuration/create-plugboard))))
   (GET "/status-views/*" []
        (create-handler (plugboard.demos.status-views.configuration/create-plugboard)))
   (GET "/basic-auth/*" []

@@ -41,7 +41,7 @@
   (is (= 200 (plugboard/get-status
               (plugboard/merge-plugboards
                plugboard/default-wiring
-               {:B3 insert-path :C7 resource-exists})
+               {:B9 insert-path :G7 resource-exists})
               {:request {:request-method :get}})))
     )
 

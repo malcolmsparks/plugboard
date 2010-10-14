@@ -17,6 +17,7 @@
 (ns plugboard.demos.jetty-fixture
   (:require
    ring.adapter.jetty
+   ring.middleware.params
    plugboard.demos.query-params.configuration
    [clojure.xml :as xml]
    [clojure.zip :as zip]
