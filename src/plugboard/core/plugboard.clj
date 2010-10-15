@@ -213,11 +213,57 @@
 ;; ------------------------ Useful aliases
 
 (def START :B13)
-(def resource-exists? :G7)
+
+;; These are aliases. Note that there are no aliases for the pairs
+;; :M7/:N5 and :O14/:P3 since these are duplicates.
+
+;; TODO: Perhaps we need a plugin-API to ensure these functions are plugged
+;; in at the appropriate points.
+
 (def authorized? :B8)
+(def known-method? :B12)
+(def request-entity-too-large? :B4)
+(def unknown-content-type? :B5)
+(def unknown-or-unsupported-content-asterisk-header? :B6)
+(def forbidden? :B7)
+(def authorized? :B8)
+(def malformed? :B9)
+(def uri-too-long? :B11)
+(def known-method? :B12)
+(def available? :B13)
+(def accept-exists? :C3)
+(def acceptable-media-type-available? :C4)
+(def accept-language-exists? :D4)
+(def acceptable-language-available? :D5)
+(def accept-charset-exists? :E5)
+(def acceptable-charset-available :E6)
+(def accept-encoding-exists? :F6)
+(def acceptable-encoding-available? :F7)
+(def resource-exists? :G7)
+(def if-match-exists? :G8)
+(def it-match-asterisk-exists? :G9)
+(def etag-in-if-match? :G11)
+(def if-match-asterisk-exists? :H7)
+(def if-unmodified-since-exists? :H10)
+(def if-unmodified-since-is-valid-date? :H11)
+(def last-modified-greater-than-if-unmodified-since? :H12)
+(def server-desires-that-the-request-be-applied-to-a-different-URI? :I4)
+(def if-none-match? :I12)
+(def if-none-match-asterisk? :I13)
 (def resource-moved-permanently? :K5)
 (def resource-previously-existed? :K7)
+(def etag-in-if-none-match? :K13)
+(def resource-moved-temporarily? :L5)
+(def if-modified-since-exists? :L13)
+(def if-modified-since-is-valid-date? :L14)
+(def if-modified-since-greater-than-now? :L15)
+(def last-modified-greater-than-if-modified-since? :L17)
+(def delete-enacted? :M20)
 (def redirect? :N11)
+(def multiple-representations? :O18)
+(def response-includes-an-entity? :O20)
+(def new-resource? :P11)
+
 
 ;; ------------------------ Construction
 
