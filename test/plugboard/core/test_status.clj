@@ -39,7 +39,7 @@
   )
 
 (deftest test-can-override-resource-exists
-  (is (= 200 (get-status (merge-plugboards default-wiring {:G7 true})
+  (is (= 200 (get-status (merge-plugboards default-wiring {resource-exists? true})
                          {:request {:request-method :get}}))))
 
 

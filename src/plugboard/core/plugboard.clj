@@ -25,7 +25,6 @@
  URI."}
  path (var _path))
 
-
 (def transition-map
      {
       [:B3 false] :C3
@@ -211,6 +210,15 @@
       :P11 nil
       })
 
+;; ------------------------ Useful aliases
+
+(def START :B13)
+(def resource-exists? :G7)
+(def authorized? :B8)
+(def resource-moved-permanently? :K5)
+(def resource-previously-existed? :K7)
+(def redirect? :N11)
+
 ;; ------------------------ Construction
 
 (defn map-fn-on-map-vals [m f]
@@ -295,7 +303,7 @@
 ;; B13 is the start state.
 (defn get-status-with-state [plugboard state]
   (let [[status new-state]
-        (trampoline flow-junction :B13 plugboard (initialize-state plugboard state))]
+        (trampoline flow-junction START plugboard (initialize-state plugboard state))]
     [status new-state]
     ))
 

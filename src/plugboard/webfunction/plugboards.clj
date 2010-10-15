@@ -65,7 +65,7 @@
   (if-let [ct (get (meta webfn) web/content-type)]
     {"Content-Type" ct}
     {})
-    )
+  )
 
 (defn get-headers-from-webfn [webfn]
   (get-content-type [webfn])
@@ -97,7 +97,7 @@
      (number? s) (= s status)
      ;; if there is no status declared we select the function if the
      ;; status is not an error.
-     :otherwise (< status 400))) 
+     :otherwise (< status 400)))
   )
 
 (defn- webfn-matches? [path status webfn]
@@ -166,8 +166,9 @@
                (assoc web-namespaces namespaces)
                (assoc plugboard/path (get-in state [:request :route-params "*"]))
                ))
-   :G7 ; Resource exists?
-   (fn [state dlg] 
+
+   plugboard/resource-exists?
+   (fn [state dlg]
      [(not (empty? (get-matching-webfunctions-for-path (get state plugboard/path) (get state web-namespaces)))) state]
      )
    })
@@ -177,18 +178,18 @@
   )
 
 (defn welcome-page [path]
-  {:K7 (fn [state dlg] (= \/ (last (get-in state [:request :uri]))))
-   :K5 (fn [state dlg] [true
-                       (let [location (str (get-in state [:request :uri]) path)]
-                         (set-header state "Location" location))])})
+  {plugboard/resource-previously-existed?
+   (fn [state dlg] (= \/ (last (get-in state [:request :uri]))))
+   plugboard/resource-moved-permanently?
+   (fn [state dlg] [true
+                   (let [location (str (get-in state [:request :uri]) path)]
+                     (set-header state "Location" location))])})
 
 (defn redirect-to-new-resource []
   {
-   :N11 (fn [state dlg] true)
+   plugboard/redirect? (fn [state dlg] true)
    }
   )
-
-;(set-header state "Location" (get state new-location))
 
 ;; The auth string arrives as "Basic user:password" (where user:password is base64 encorded
 (defn compare-secret [expected auth-string]
@@ -197,7 +198,7 @@
     ))
 
 (defn basic-authentication [realm requires-auth-fn user password]
-  {:B8
+  {plugboard/authorized?
    (let [encoded (clojure.contrib.base64/encode-str (str user ":" password))]
      (fn [state dlg]
        (if (requires-auth-fn (get state :request))
@@ -205,7 +206,7 @@
                (and
                 (contains? (get-in state [:request :headers]) "authorization")
                 (compare-secret encoded (get-in state [:request :headers "authorization"])))]
-           (if res true 
+           (if res true
                [false (set-header state "WWW-Authenticate" (format "Basic realm=\"%s\"" realm))])
            )
          true
