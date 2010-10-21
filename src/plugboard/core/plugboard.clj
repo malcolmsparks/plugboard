@@ -214,12 +214,6 @@
 
 (def START :B13)
 
-;; These are aliases. Note that there are no aliases for the pairs
-;; :M7/:N5 and :O14/:P3 since these are duplicates.
-
-;; TODO: Perhaps we need a plugin-API to ensure these functions are plugged
-;; in at the appropriate points.
-
 (def authorized? :B8)
 (def known-method? :B12)
 (def request-entity-too-large? :B4)
@@ -264,6 +258,10 @@
 (def response-includes-an-entity? :O20)
 (def new-resource? :P11)
 
+;; Here are aliases for state groups, where the same function is
+;; called in multiple states.
+(def server-permits-post-to-missing-resource? [:M7 :N5])
+(def conflict? [:O14 :P3])
 
 ;; ------------------------ Construction
 
@@ -272,11 +270,25 @@
   )
 
 (defn merge-plugboards [& maps]
-  (letfn [(cons* [a b]
+  (letfn [
+          ;; Similar to cons, but ensures
+          (cons* [a b]
                  (if (list? a) (cons b a)
                      (list a b)))
-          (ensure-list [a] (if (list? a) a (list a)))]
-    (map-fn-on-map-vals (apply (partial merge-with cons*) maps) ensure-list)
+          (ensure-list [a] (if (list? a) a (list a)))
+          ;; Any key that happens to be a vector is unrolled into
+          ;; individual keys (with the same value for each)
+          (unroll-keys [mm] (reduce (fn [m [k v]]
+                                      (cond (vector? k) (reduce (fn [m2 k2] (assoc m2 k2 v)) m k)
+                                            :otherwise (assoc m k v)))
+                                    {} mm))
+          ]
+    (->
+     (partial merge-with cons*)         ; Create the merging function
+     (apply (map unroll-keys maps))          ; Call the merging function to
+                                        ; all the maps (we expand each
+                                        ; map first)
+     (map-fn-on-map-vals ensure-list))
     ))
 
 ;; ------------------------ Flow
@@ -296,18 +308,18 @@
       (throw (Exception. (format "No transition for tuple: %s" tuple)))
       res)))
 
-; Returns [boolean state] decision
+                                        ; Returns [boolean state] decision
 (defn- decide [state f dlg]
   (cond
    (fn? f) (let [res (f state dlg)]
-             (if 
+             (if
                  (vector? res) res
                  [res state])
-                 )
+             )
    :otherwise [f state]
    ))
 
-; Returns [boolean state]
+                                        ; Returns [boolean state]
 (defn- decides [state stack]
   (decide state (first stack) (fn [state] (decides state (rest stack))))
   )
@@ -318,7 +330,7 @@
         list to override the preceeding elements because that is the convention
         already established by the merge function. Reversing this convention
         would confuse developers already familiar with Clojure conventions."  }
-        get-plug-decision [state stack]
+  get-plug-decision [state stack]
   (decides state (reverse stack))
   )
 

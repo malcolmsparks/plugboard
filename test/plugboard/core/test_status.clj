@@ -38,11 +38,6 @@
   (is (= 404 (get-status (merge-plugboards default-wiring) {:request {:request-method :get}})))
   )
 
-(deftest test-can-override-resource-exists
-  (is (= 200 (get-status (merge-plugboards default-wiring {resource-exists? true})
-                         {:request {:request-method :get}}))))
-
-
 (deftest test-header-exists
   (is (true? ((header-exists? "foo") {:request {:headers {"foo" "bar"}}} nil)))
   )
