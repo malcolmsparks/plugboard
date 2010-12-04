@@ -308,7 +308,7 @@
       (throw (Exception. (format "No transition for tuple: %s" tuple)))
       res)))
 
-                                        ; Returns [boolean state] decision
+;; Returns [boolean state] decision
 (defn- decide [state f dlg]
   (cond
    (fn? f) (let [res (f state dlg)]
@@ -319,7 +319,7 @@
    :otherwise [f state]
    ))
 
-                                        ; Returns [boolean state]
+;; Returns [boolean state]
 (defn- decides [state stack]
   (decide state (first stack) (fn [state] (decides state (rest stack))))
   )
