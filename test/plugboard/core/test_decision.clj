@@ -81,5 +81,12 @@
       (fn [state dlg] (dlg  (dissoc state :zip)))
       ]
      {:foo "foo"}
+
+     ;; It must be possible to return a pair which returns a status
+     ;; code and altered state.
+     {:foo "foo"}
+     [100 (fn [state dlg] [200 (assoc state :bar "bar")])]
+     {:foo "foo" :bar "bar"}
      )
-  ))
+    )
+  )
