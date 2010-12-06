@@ -337,10 +337,16 @@
 ;; Returns [next-junction new-state]
 (defn perform-junction [junction plugboard state]
   (let [[decision new-state] (get-plug-decision state (get plugboard junction))]
-    (if (nil? decision) (throw (Exception. (format "No decision at junction %s" junction))))
-    (let [next (lookup-next [junction decision])]
-      ;;(println (format "%s -> %s -> %s" junction decision next))
-      [next new-state]))
+
+    (cond
+     (nil? decision) (throw (Exception. (format "No decision at junction %s" junction)))
+     (integer? decision) [decision new-state]
+     :otherwise
+     (let [next (lookup-next [junction decision])]
+       ;;(println (format "%s -> %s -> %s" junction decision next))
+       [next new-state])
+     )
+    )
   )
 
 ;; Ultimately returns [status state]

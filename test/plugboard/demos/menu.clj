@@ -29,6 +29,7 @@
      [:li [:a {:href "forms/"} "forms"]]
      [:li [:a {:href "status-views/"} "status-views"]]
      [:li [:a {:href "basic-auth/"} "basic-auth"]]
+     [:li [:a {:href "custom-auth/index.html"} "custom-auth"]]
      ]
     ]))
      

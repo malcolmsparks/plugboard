@@ -24,6 +24,7 @@
    plugboard.demos.forms.configuration
    plugboard.demos.status-views.configuration
    plugboard.demos.basic-auth.configuration
+   plugboard.demos.custom-auth.configuration
    [compojure.route :as route]
    ring.middleware.params
    ))
@@ -49,6 +50,8 @@
        (create-handler (plugboard.demos.status-views.configuration/create-plugboard)))
   (GET "/basic-auth/*" []
        (create-handler (plugboard.demos.basic-auth.configuration/create-plugboard)))
+  (GET "/custom-auth/*" []
+       (create-handler (plugboard.demos.custom-auth.configuration/create-plugboard)))
   (route/not-found "<h1>Page not found</h1>"))
 
 
