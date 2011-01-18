@@ -141,7 +141,6 @@
 ;; This is almost identical to
 ;; plugboard.webfunction.response/webfn-matches-path? but doesn't
 ;; count functions that don't have paths.
-;; TODO: Try to re-factor so that only one such function is needed?
 (defn webfn-matches-path? [path webfn]
   (let [p (get (meta webfn) web/path)]
     (cond
