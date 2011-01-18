@@ -145,7 +145,7 @@
 
 (defn header-exists? [header]
   (fn [state dlg]
-    (contains? (get-in state [:request :headers]) header)
+    (contains? (get-in state [:request :headers]) (.toLowerCase header))
     ))
 
 (defn header-is? [header expected]
