@@ -43,7 +43,6 @@
   (GET "/links/*" []
        (create-handler (plugboard.demos.links.configuration/create-plugboard)))
   (ANY "/forms/*" []
-       ;; TODO: Ring just doesn't seem to be working - have to debug it.
        (ring.middleware.params/wrap-params
         (create-handler (plugboard.demos.forms.configuration/create-plugboard))))
   (GET "/status-views/*" []
@@ -53,5 +52,3 @@
   (GET "/custom-auth/*" []
        (create-handler (plugboard.demos.custom-auth.configuration/create-plugboard)))
   (route/not-found "<h1>Page not found</h1>"))
-
-
