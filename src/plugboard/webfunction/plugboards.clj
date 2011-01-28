@@ -32,12 +32,21 @@
  ^{:doc "The location of the newly appended resource. Used for redirects."}
  new-location (var _newlocation))
 
+(def ^{:private true} _umwf)
+(def
+ ^{:doc "A vector of web functions that match the URI."}
+ uri-matching-web-functions (var _umwf))
+
+<<<<<<< HEAD
 ;; --------------------------------------------------------------------------------
 
 (def ^{:private true} _umwf)
 (def
  ^{:doc "A vector of web functions that match the URI."}
  uri-matching-web-functions (var _umwf))
+=======
+(defrecord ContentFunction [webfn content-type])
+>>>>>>> 62a1b6e... All tests pass - accept functionality now working ok.
 
 (defn is-web-namespace? [ns]
   (= (find-ns 'plugboard.webfunction.webfunction) ns))
@@ -54,32 +63,32 @@
       (not)))
 
 (defn get-web-functions [ns]
-  (-> ns
-      (ns-publics)
-      ((partial map second))
-      ((partial filter is-web-function?))))
+  (map (fn [webfn] (ContentFunction. webfn (get (meta webfn) web/content-type)))
+       (filter is-web-function? (map second (ns-publics ns)))))
 
 ;; --------------------------------------------------------------------------------
 
-(defn ^{:doc "Get the content type from the web function metadata"}
-  get-content-type [webfn]
-  (if-let [ct (get (meta webfn) web/content-type)]
-    {"Content-Type" ct}
-    {})
-  )
+(defn
+  ^{:doc "Get the content type from the web function metadata"}
+  get-content-type-fragment [^ContentFunction cf]
+  (:type (conneg/accept-fragment (get (meta (:webfn cf)) web/content-type))))
 
 (defn get-headers-from-webfn [webfn]
-  (get-content-type [webfn])
-  )
+  (if-let [ct (get (meta webfn) web/content-type)]
+    {"Content-Type" ct}
+    {}))
 
-(defn get-body [status request webfn]
+(defn get-body [status request webfn content-type]
   (if (not (nil? webfn))
     (with-bindings {(var web/*web-context*)
-                    {:status status :request request :meta (meta webfn)}}
+                    {:status status :request request :meta (meta webfn) :content-type content-type}}
       (webfn))))
 
 (defn initialize-state [req]
-  {:request req :response {:headers {}}})
+  {:request req
+   :response {:headers {}}
+   uri-matching-web-functions []
+   })
 
 (defn- webfn-matches-path-or-nil? [path webfn]
   (let [p (get (meta webfn) web/path)]
@@ -103,26 +112,26 @@
    (webfn-matches-path-or-nil? path webfn)
    (webfn-matches-status? status webfn)))
 
-(defn get-matching-webfunctions [path status namespaces]
-  (mapcat
-   (fn [web-ns]
-     (filter #(webfn-matches? path status %)
-             (plugboard.webfunction.plugboards/get-web-functions
-              web-ns)))
-   namespaces))
-
 (defn get-response [req plugboard]
   (let [[status state] (plugboard/get-status-with-state plugboard
                          (initialize-state req))
-        namespaces (get state web-namespaces)
-        webfns (get-matching-webfunctions (get state plugboard/path) status namespaces)
-        webfn (first webfns)
-        headers (merge (get-in state [:response :headers] (get-headers-from-webfn webfn)))
-        body (get-body status req webfn)
-        ]
-    (if (map? body)
-      {:status status :headers (merge headers (:headers body)) :body (:body body)}
-      {:status status :headers headers :body body})))
+        webfns (get state uri-matching-web-functions)]
+    (if-let [^ContentFunction cf (first webfns)]
+      (let [webfn (:webfn cf)
+            content-type (:content-type cf) ; TODO: Add a bit of
+                                        ; destructuring here.
+            headers (merge (get-in state [:response :headers] (get-headers-from-webfn webfn)))
+            body (get-body status req webfn content-type)
+            ]
+        (if (map? body)
+          {:status status :headers (merge headers (:headers body)) :body (:body body)}
+          {:status status :headers headers :body body})
+        )
+      ;; If there is no web-fn...
+      {:status 404
+       :headers []
+       :body "No webfunctions match request"}
+      )))
 
 ;; This creates a handler that can be wrapped in ring middleware.
 (defn create-response-handler [plugboard]
@@ -144,31 +153,29 @@
 (defn get-matching-webfunctions-for-path [path web-namespaces]
   (mapcat
    (fn [web-ns]
-     (map (fn [webfn]
-            [webfn (get (meta webfn) web/content-type)]
-            )
+     (map (fn [webfn] [webfn (get (meta webfn) web/content-type)])
           (filter #(webfn-matches-path? path %)
                   (plugboard.webfunction.plugboards/get-web-functions
                    web-ns))))
    web-namespaces))
 
 (defn web-function-resources [namespaces]
-  {
-   :init (fn [state]
+  {:init (fn [state]
            (-> state
                (assoc web-namespaces namespaces)
                (assoc plugboard/path (get-in state [:request :route-params "*"]))
                ))
-
-   plugboard/resource-exists?
-   (fn [state dlg]
-     [(not (empty? (get-matching-webfunctions-for-path (get state plugboard/path) (get state web-namespaces)))) state]
-     )
-   })
+   plugboard/malformed? (fn [state dlg]
+                          [false (assoc state
+                                   uri-matching-web-functions
+                                   (get-matching-webfunctions-for-path
+                                    (get state plugboard/path)
+                                    (get state web-namespaces)))])
+   plugboard/resource-exists? (fn [state dlg]
+                                [(not (empty? (get state uri-matching-web-functions))) state])})
 
 (defn set-header [state name value]
-  (update-in state [:response :headers] (fn [old] (assoc old name value)))
-  )
+  (update-in state [:response :headers] (fn [old] (assoc old name value))))
 
 (defn welcome-page [path]
   {plugboard/resource-previously-existed?
@@ -179,16 +186,12 @@
                      (set-header state "Location" location))])})
 
 (defn redirect-to-new-resource []
-  {
-   plugboard/redirect? (fn [state dlg] true)
-   }
-  )
+  {plugboard/redirect? (fn [state dlg] true)})
 
-;; The auth string arrives as "Basic user:password" (where user:password is base64 encorded
+;; The auth string arrives as "Basic user:password" (where user:password is base64 encoded)
 (defn compare-secret [expected auth-string]
   (let [actual (second (re-seq #"[\w=]+" auth-string))]
-    (= expected actual)
-    ))
+    (= expected actual)))
 
 (defn basic-authentication [realm requires-auth-fn user password]
   {plugboard/authorized?
@@ -203,3 +206,25 @@
                [false (set-header state "WWW-Authenticate" (format "Basic realm=\"%s\"" realm))]))
          true)))})
 
+(defn negotiate-content [candidates accepts extractor]
+  (filter #(not (nil? %))
+          (reduce concat
+                  (map (fn [accept]
+                         (map
+                          (fn [^ContentFunction candidate]
+                            (when-let [res (conneg/acceptable-type (extractor candidate) accept)]
+                              (ContentFunction. (:webfn candidate) res)))
+                          candidates))
+                       accepts))))
+
+(defn accept []
+  {plugboard/acceptable-media-type-available?
+   (fn [state dlg]
+     (let [accepts (map :type (conneg/sorted-accept (get-in state [:request :headers "accept"])))
+           unfiltered-functions (get state uri-matching-web-functions)
+           filtered-functions (negotiate-content unfiltered-functions accepts get-content-type-fragment)
+           new-state (assoc state uri-matching-web-functions filtered-functions)
+           ]
+       [(not (empty? filtered-functions)) new-state]
+       )
+     )})

@@ -14,22 +14,35 @@
 ;;
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
-(ns plugboard.demos.menu
-  (:require [hiccup.core :as hiccup])
+(ns plugboard.demos.accept.webfunctions
+  (:require
+   [plugboard.webfunction.webfunction :as web]
+   [hiccup.core :as hiccup]
+   )
   )
 
-(defn render-page []
+(defn ^{web/path "index"
+        web/content-type "text/html"
+        :title "Accept demo - text/html"}
+  index-html []
   (hiccup/html
-   [:h1 "Plugboard"]
-   [:h2 "Main menu"]
-   [:ul
-    [:li [:a {:href "hello-world/"} "hello-world"]]
-    [:li [:a {:href "query-params/"} "query-params"]]
-    [:li [:a {:href "links/"} "links"]]
-    [:li [:a {:href "forms/"} "forms"]]
-    [:li [:a {:href "status-views/"} "status-views"]]
-    [:li [:a {:href "basic-auth/"} "basic-auth"]]
-    [:li [:a {:href "custom-auth/index.html"} "custom-auth"]]
-    [:li [:a {:href "accept/index"} "accept"]]
-    ]))
-     
+   [:h1 (web/get-meta :title)]
+   ))
+
+(defn ^{web/path "index"
+        web/content-type "text/plain"
+        :title "Accept demo - text/plain"}
+  index-plain []
+  "Accept demo"
+  )
+
+(defn ^{web/path "index"
+        web/content-type "application/xhtml+xml"
+        }
+  index-xml []
+  (hiccup/html
+   [:h1 "Index"]
+   [:p "Content type is " (str (web/get-content-type))]
+   [:p (str (web/get-request))]
+   ))
+

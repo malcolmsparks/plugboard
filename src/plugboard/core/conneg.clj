@@ -1,3 +1,6 @@
+;;; This has been copied from the Clojure conneg library.
+;;; TODO@online: Need to check license and add proper attribution.
+
 ;;;
 ;;; TODO: sort by level for text/html. Maybe also sort by charset.
 ;;; Finally, compare by precedence rules:
@@ -162,3 +165,7 @@
  
         true
         (first-fn (allowed-types-filter (enpair allowed-types)) sorted)))))
+
+
+
+

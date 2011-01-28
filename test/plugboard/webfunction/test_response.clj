@@ -49,7 +49,7 @@
 (deftest test-content-type
   (is (= "text/html"
          (get
-          (plugboard.webfunction.plugboards/get-content-type (get (ns-publics testing-ns) 'rep1))
+          (plugboard.webfunction.plugboards/get-headers-from-webfn (get (ns-publics testing-ns) 'rep1))
           "Content-Type"))))
 
 (def plugboard

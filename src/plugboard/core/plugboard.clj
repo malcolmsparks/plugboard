@@ -165,11 +165,11 @@
       :C3 (header-exists? "Accept")
       :C4 false
       :D4 (header-exists? "Accept-Language")
-      :D5 false
+      :D5 true
       :E5 (header-exists? "Accept-Charset")
-      :E6 false
+      :E6 true
       :F6 (header-exists? "Accept-Encoding")
-      :F7 false
+      :F7 true
       :G7 false
       :G8 (header-exists? "If-Match")
       :G9 nil
@@ -331,7 +331,7 @@
      (integer? decision) [decision new-state]
      :otherwise
      (let [next (lookup-next [junction decision])]
-       (println (format "%s -> %s -> %s" junction decision next))
+;;      (println (format "%s -> %s -> %s" junction decision next))
        [next new-state]))))
 
 ;; Ultimately returns [status state]

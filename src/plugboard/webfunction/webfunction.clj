@@ -74,3 +74,6 @@
   (get-in *web-context* [:request :form-params k])
   )
 
+(defn get-content-type []
+  (get *web-context* :content-type)
+  )
