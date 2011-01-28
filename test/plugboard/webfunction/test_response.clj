@@ -28,18 +28,15 @@
    [clojure.xml :as xml]
    [clojure.zip :as zip]
    [clojure.contrib.zip-filter.xml :as zf]
-   [clojure.java.io :as io]
-   )
-  )
+   [clojure.java.io :as io]))
 
 (def testing-ns (create-ns 'plugboard.webfunction.test-body.ns))
 
 (with-ns testing-ns
-
   (clojure.core/refer-clojure)
   (require 'hiccup.core)
   (require 'plugboard.webfunction.webfunction)
-  
+
   (defn ^{plugboard.webfunction.webfunction/path "index.html"
           plugboard.webfunction.webfunction/content-type "text/html"
           :title "Title"}
@@ -47,11 +44,7 @@
     (hiccup.core/html
      [:body
       [:h1  (plugboard.webfunction.webfunction/get-meta :title)]
-      [:p#query-param (plugboard.webfunction.webfunction/get-query-param "fish")]
-      ]
-     )
-    )
-  )
+      [:p#query-param (plugboard.webfunction.webfunction/get-query-param "fish")]])))
 
 (deftest test-content-type
   (is (= "text/html"
@@ -62,27 +55,23 @@
 (def plugboard
      (plugboard/merge-plugboards
       plugboard/default-wiring
-      (plugboard.webfunction.plugboards/web-function-resources [testing-ns])
-            ))
+      (plugboard.webfunction.plugboards/web-function-resources [testing-ns])))
 
 (def request {:uri "/index.html" :route-params {"*" "index.html"} :request-method :get :query-string "fish=Herring"})
 
 ;; After initialization the state should store the web-namespaces.
 (comment ;; Re-instate
-(deftest test-initialization
-  (is (= {plugboard.webfunction.plugboards/web-namespaces [testing-ns]
-          plugboard/path "/index.html"}
-         (plugboard/initialize-state plugboard {}))))
-)
-  
+  (deftest test-initialization
+    (is (= {plugboard.webfunction.plugboards/web-namespaces [testing-ns]
+            plugboard/path "/index.html"}
+           (plugboard/initialize-state plugboard {})))))
+
 (deftest test-index-response
   (let [handler (wrap-params (plugboard.webfunction.plugboards/create-response-handler plugboard) :query-string)
         response (handler request)
         doc (zip/xml-zip (xml/parse
                           (org.xml.sax.InputSource.
-                           (java.io.StringReader. (:body response)))))
-        ]
+                           (java.io.StringReader. (:body response)))))]
     (is (= 200 (:status response)))
     (is (= "Title" (zf/xml1-> doc :h1 zf/text)))
-    (is (= "Herring" (zf/xml1-> doc :p [(zf/attr= :id "query-param")] zf/text)))
-    ))
+    (is (= "Herring" (zf/xml1-> doc :p [(zf/attr= :id "query-param")] zf/text)))))

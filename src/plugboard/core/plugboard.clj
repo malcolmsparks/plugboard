@@ -134,8 +134,7 @@
       [:P3 false] :P11
       [:P3 true] 409
       [:P11 false] :O20
-      [:P11 true] 201
-      })
+      [:P11 true] 201})
 
 (defn is-web-method? [& candidates]
   (fn [state dlg]
@@ -145,17 +144,14 @@
 
 (defn header-exists? [header]
   (fn [state dlg]
-    (contains? (get-in state [:request :headers]) (.toLowerCase header))
-    ))
+    (contains? (get-in state [:request :headers]) (.toLowerCase header))))
 
 (defn header-is? [header expected]
   (fn [state dlg]
-    (= (get-in state [:request :headers header]) expected)
-    ))
+    (= (get-in state [:request :headers header]) expected)))
 
 (def default-wiring
-     {
-      :B3 (is-web-method? :options)
+     {:B3 (is-web-method? :options)
       :B4 false
       :B5 false
       :B6 false
@@ -207,8 +203,7 @@
       :O18 false
       :O20 nil
       :P3 nil
-      :P11 nil
-      })
+      :P11 nil})
 
 ;; ------------------------ Useful aliases
 
@@ -266,8 +261,7 @@
 ;; ------------------------ Construction
 
 (defn map-fn-on-map-vals [m f]
-  (zipmap (keys m) (map f (vals m)))
-  )
+  (zipmap (keys m) (map f (vals m))))
 
 (defn merge-plugboards [& maps]
   (letfn [
@@ -281,15 +275,13 @@
           (unroll-keys [mm] (reduce (fn [m [k v]]
                                       (cond (vector? k) (reduce (fn [m2 k2] (assoc m2 k2 v)) m k)
                                             :otherwise (assoc m k v)))
-                                    {} mm))
-          ]
+                                    {} mm))]
     (->
      (partial merge-with cons*)         ; Create the merging function
      (apply (map unroll-keys maps))          ; Call the merging function to
                                         ; all the maps (we expand each
                                         ; map first)
-     (map-fn-on-map-vals ensure-list))
-    ))
+     (map-fn-on-map-vals ensure-list))))
 
 ;; ------------------------ Flow
 
@@ -314,15 +306,12 @@
    (fn? f) (let [res (f state dlg)]
              (if
                  (vector? res) res
-                 [res state])
-             )
-   :otherwise [f state]
-   ))
+                 [res state]))
+   :otherwise [f state]))
 
 ;; Returns [boolean state]
 (defn- decides [state stack]
-  (decide state (first stack) (fn [state] (decides state (rest stack))))
-  )
+  (decide state (first stack) (fn [state] (decides state (rest stack)))))
 
 (defn ^{:doc "Get the result of the given layer of plug functions. We reverse
         the list so that the first elements of the list override later elements
@@ -331,8 +320,7 @@
         already established by the merge function. Reversing this convention
         would confuse developers already familiar with Clojure conventions."  }
   get-plug-decision [state stack]
-  (decides state (reverse stack))
-  )
+  (decides state (reverse stack)))
 
 ;; Returns [next-junction new-state]
 (defn perform-junction [junction plugboard state]
@@ -343,11 +331,8 @@
      (integer? decision) [decision new-state]
      :otherwise
      (let [next (lookup-next [junction decision])]
-       ;;(println (format "%s -> %s -> %s" junction decision next))
-       [next new-state])
-     )
-    )
-  )
+       (println (format "%s -> %s -> %s" junction decision next))
+       [next new-state]))))
 
 ;; Ultimately returns [status state]
 (defn flow-junction [junction plugboard state]
@@ -360,16 +345,14 @@
 (defn initialize-state [plugboard state]
   (if-let [inits (get plugboard :init)]
     (reduce #(%2 %1) state inits) ; this calls all the init functions, threading the state through each one.
-    state
-    ))
+    state))
 
 ;; Ultimately returns [status state]
 ;; B13 is the start state.
 (defn get-status-with-state [plugboard state]
   (let [[status new-state]
         (trampoline flow-junction START plugboard (initialize-state plugboard state))]
-    [status new-state]
-    ))
+    [status new-state]))
 
 (defn get-status [plugboard state]
   (let [[status _] (get-status-with-state plugboard state)]

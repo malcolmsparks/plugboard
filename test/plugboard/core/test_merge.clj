@@ -17,9 +17,7 @@
 (ns plugboard.core.test-merge
   (:use
    clojure.test
-   plugboard.core.plugboard
-   )
-  )
+   plugboard.core.plugboard))
 
 (deftest test-can-override-resource-exists
   (is (= 200 (get-status (merge-plugboards default-wiring {resource-exists? true})
@@ -35,7 +33,6 @@
   (is (= {:A1 '(true) :B1 '(true)}
          (merge-plugboards {[:A1 :B1] true})))
   (is (= {:A1 '(true) :B1 '(true false)}
-         (merge-plugboards {[:A1 :B1] true} {:B1 false})))
-  )
+         (merge-plugboards {[:A1 :B1] true} {:B1 false}))))
 
 

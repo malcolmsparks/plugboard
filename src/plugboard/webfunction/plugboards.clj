@@ -20,8 +20,7 @@
             [clojure.contrib.condition :as condition]
             [plugboard.core.plugboard :as plugboard]
             clojure.contrib.base64
-            )
-  )
+            [plugboard.core.conneg :as conneg]))
 
 (def ^{:private true} _wn)
 (def
@@ -35,10 +34,13 @@
 
 ;; --------------------------------------------------------------------------------
 
+(def ^{:private true} _umwf)
+(def
+ ^{:doc "A vector of web functions that match the URI."}
+ uri-matching-web-functions (var _umwf))
 
 (defn is-web-namespace? [ns]
-  (= (find-ns 'plugboard.webfunction.webfunction) ns)
-  )
+  (= (find-ns 'plugboard.webfunction.webfunction) ns))
 
 (defn is-web-function? [f]
   (-> f
@@ -55,8 +57,7 @@
   (-> ns
       (ns-publics)
       ((partial map second))
-      ((partial filter is-web-function?))
-      ))
+      ((partial filter is-web-function?))))
 
 ;; --------------------------------------------------------------------------------
 
@@ -78,8 +79,7 @@
       (webfn))))
 
 (defn initialize-state [req]
-  {:request req :response {:headers {}}}
-  )
+  {:request req :response {:headers {}}})
 
 (defn- webfn-matches-path-or-nil? [path webfn]
   (let [p (get (meta webfn) web/path)]
@@ -87,8 +87,7 @@
      (nil? p) true                    ; it's a match if it's not specified.
      (fn? p) (true? (p path))
      (string? p) (= p path)
-     :otherwise false))
-  )
+     :otherwise false)))
 
 (defn- webfn-matches-status? [status webfn]
   (let [s (get (meta webfn) web/status)]
@@ -97,15 +96,12 @@
      (number? s) (= s status)
      ;; if there is no status declared we select the function if the
      ;; status is not an error.
-     :otherwise (< status 400)))
-  )
+     :otherwise (< status 400))))
 
 (defn- webfn-matches? [path status webfn]
   (and
    (webfn-matches-path-or-nil? path webfn)
-   (webfn-matches-status? status webfn)
-   )
-  )
+   (webfn-matches-status? status webfn)))
 
 (defn get-matching-webfunctions [path status namespaces]
   (mapcat
@@ -113,8 +109,7 @@
      (filter #(webfn-matches? path status %)
              (plugboard.webfunction.plugboards/get-web-functions
               web-ns)))
-   namespaces)
-  )
+   namespaces))
 
 (defn get-response [req plugboard]
   (let [[status state] (plugboard/get-status-with-state plugboard
@@ -127,9 +122,7 @@
         ]
     (if (map? body)
       {:status status :headers (merge headers (:headers body)) :body (:body body)}
-      {:status status :headers headers :body body}
-      )
-    ))
+      {:status status :headers headers :body body})))
 
 ;; This creates a handler that can be wrapped in ring middleware.
 (defn create-response-handler [plugboard]
@@ -146,17 +139,18 @@
     (cond
      (fn? p) (true? (p path))
      (string? p) (= p path)
-     :otherwise false))
-  )
+     :otherwise false)))
 
 (defn get-matching-webfunctions-for-path [path web-namespaces]
   (mapcat
    (fn [web-ns]
-     (filter #(webfn-matches-path? path %)
-             (plugboard.webfunction.plugboards/get-web-functions
-              web-ns)))
-   web-namespaces)
-  )
+     (map (fn [webfn]
+            [webfn (get (meta webfn) web/content-type)]
+            )
+          (filter #(webfn-matches-path? path %)
+                  (plugboard.webfunction.plugboards/get-web-functions
+                   web-ns))))
+   web-namespaces))
 
 (defn web-function-resources [namespaces]
   {
@@ -206,7 +200,6 @@
                 (contains? (get-in state [:request :headers]) "authorization")
                 (compare-secret encoded (get-in state [:request :headers "authorization"])))]
            (if res true
-               [false (set-header state "WWW-Authenticate" (format "Basic realm=\"%s\"" realm))])
-           )
-         true
-         )))})
+               [false (set-header state "WWW-Authenticate" (format "Basic realm=\"%s\"" realm))]))
+         true)))})
+

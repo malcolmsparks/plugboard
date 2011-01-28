@@ -27,14 +27,12 @@
 
 (defn create-handler [plugboard]
   (fn [req]
-    (plugboard.webfunction.plugboards/get-response req plugboard)
-    ))
+    (plugboard.webfunction.plugboards/get-response req plugboard)))
 
 (defn run-jetty [routes]
   (ring.adapter.jetty/run-jetty
    routes
-   {:join? false :port (get-jetty-port)}
-   ))
+   {:join? false :port (get-jetty-port)}))
 
 (defn make-fixture [routes]
   (fn [f]
@@ -42,8 +40,7 @@
       (try 
         (f)
         (finally
-         (.stop jetty))))
-  ))
+         (.stop jetty))))))
 
 (defn body-zip [response]
   (zip/xml-zip (xml/parse

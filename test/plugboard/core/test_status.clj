@@ -17,31 +17,24 @@
 (ns plugboard.core.test-status
   (:use
    clojure.test
-   plugboard.core.plugboard
-   )
-  )
+   plugboard.core.plugboard))
 
 (deftest test-is-method
   (is ((is-web-method? :put) {:request {:request-method :put}} nil))
   (is (not ((is-web-method? :put) {:request {:request-method :post}} nil)))
   (is ((is-web-method? :get :head) {:request {:request-method :get}} nil))
-  (is (not ((is-web-method? :get :head) {:request {:request-method :options}} nil)))
-  )
+  (is (not ((is-web-method? :get :head) {:request {:request-method :options}} nil))))
 
 (deftest test-header-exists
   (is ((header-exists? "If-Match") {:request {:headers {"If-Match" "*"}}} nil))
-  (is (not ((header-exists? "If-Match") {:request {:headers {"Dummy" "true"}}} nil)))
-  )
+  (is (not ((header-exists? "If-Match") {:request {:headers {"Dummy" "true"}}} nil))))
 
 (deftest test-get-status
   (is (= 200 (get-status (merge-plugboards default-wiring) {:request {:request-method :options}})))
-  (is (= 404 (get-status (merge-plugboards default-wiring) {:request {:request-method :get}})))
-  )
+  (is (= 404 (get-status (merge-plugboards default-wiring) {:request {:request-method :get}}))))
 
 (deftest test-header-exists
-  (is (true? ((header-exists? "foo") {:request {:headers {"foo" "bar"}}} nil)))
-  )
+  (is (true? ((header-exists? "foo") {:request {:headers {"foo" "bar"}}} nil))))
 
 (deftest test-if-match-wildcard
-  (is (true? ((header-is? "foo" "bar") {:request {:headers {"foo" "bar"}}} nil)))
-  )
+  (is (true? ((header-is? "foo" "bar") {:request {:headers {"foo" "bar"}}} nil))))

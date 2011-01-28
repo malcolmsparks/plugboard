@@ -21,8 +21,7 @@
    )
   (:require
    plugboard.webfunction.plugboards
-   [plugboard.webfunction.webfunction :as web]
-  ))
+   [plugboard.webfunction.webfunction :as web]))
 
 (def testing-ns (create-ns 'webfunction.test-meta.ns1))
 
@@ -44,21 +43,17 @@
 
   (defn fn1 [] nil)
   (defn ^{:private true} fn2 [] nil)
-  (defn ^{:dummy true} fn3 [] nil)
-  )
+  (defn ^{:dummy true} fn3 [] nil))
 
 (deftest test-is-web-namespace
   (is (true? (plugboard.webfunction.plugboards/is-web-namespace? (find-ns 'plugboard.webfunction.webfunction))))
-  (is (false? (plugboard.webfunction.plugboards/is-web-namespace? (find-ns 'clojure.core))))
-  )
+  (is (false? (plugboard.webfunction.plugboards/is-web-namespace? (find-ns 'clojure.core)))))
 
 (deftest test-is-web-function
   (is (true? (plugboard.webfunction.plugboards/is-web-function? (get (ns-publics testing-ns) 'rep1))))
   (is (true? (plugboard.webfunction.plugboards/is-web-function? (get (ns-publics testing-ns) 'rep2))))
   (is (false? (plugboard.webfunction.plugboards/is-web-function? (get (ns-publics testing-ns) 'fn1))))
-  (is (false? (plugboard.webfunction.plugboards/is-web-function? (get (ns-publics testing-ns) 'fn3))))
-  )
+  (is (false? (plugboard.webfunction.plugboards/is-web-function? (get (ns-publics testing-ns) 'fn3)))))
 
 (deftest test-get-web-functions
-  (is (= 2 (count (plugboard.webfunction.plugboards/get-web-functions testing-ns))))
-  )
+  (is (= 2 (count (plugboard.webfunction.plugboards/get-web-functions testing-ns)))))
