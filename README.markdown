@@ -1,5 +1,5 @@
 # plugboard
-by Malcolm Sparks
+by Malcolm Sparks & Gavin Manning
 
 ## Introduction
 
