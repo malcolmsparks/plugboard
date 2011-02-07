@@ -112,7 +112,6 @@
   (let [[status state] (plugboard/get-status-with-state plugboard
                          (initialize-state req))
         webfns (get state uri-matching-web-functions)]
-    (println "webfns is " webfns)
     (if-let [^ContentFunction cf (first webfns)]
       (let [webfn (:webfn cf)
             content-type (:content-type cf) ; TODO: Add a bit of
@@ -162,7 +161,6 @@
                (assoc plugboard/path (get-in state [:request :route-params "*"]))
                ))
    plugboard/malformed? (fn [state dlg]
-                          (println "malformed?")
                           [false (assoc state
                                    uri-matching-web-functions
                                    (get-matching-webfunctions-for-path
