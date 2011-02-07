@@ -37,16 +37,12 @@
  ^{:doc "A vector of web functions that match the URI."}
  uri-matching-web-functions (var _umwf))
 
-<<<<<<< HEAD
-;; --------------------------------------------------------------------------------
-
 (def ^{:private true} _umwf)
 (def
  ^{:doc "A vector of web functions that match the URI."}
  uri-matching-web-functions (var _umwf))
-=======
+
 (defrecord ContentFunction [webfn content-type])
->>>>>>> 62a1b6e... All tests pass - accept functionality now working ok.
 
 (defn is-web-namespace? [ns]
   (= (find-ns 'plugboard.webfunction.webfunction) ns))
@@ -116,6 +112,7 @@
   (let [[status state] (plugboard/get-status-with-state plugboard
                          (initialize-state req))
         webfns (get state uri-matching-web-functions)]
+    (println "webfns is " webfns)
     (if-let [^ContentFunction cf (first webfns)]
       (let [webfn (:webfn cf)
             content-type (:content-type cf) ; TODO: Add a bit of
@@ -130,7 +127,7 @@
       ;; If there is no web-fn...
       {:status 404
        :headers []
-       :body "No webfunctions match request"}
+       :body "<p>No webfunctions match request</p>"}
       )))
 
 ;; This creates a handler that can be wrapped in ring middleware.
@@ -153,10 +150,9 @@
 (defn get-matching-webfunctions-for-path [path web-namespaces]
   (mapcat
    (fn [web-ns]
-     (map (fn [webfn] [webfn (get (meta webfn) web/content-type)])
-          (filter #(webfn-matches-path? path %)
-                  (plugboard.webfunction.plugboards/get-web-functions
-                   web-ns))))
+     (filter #(webfn-matches-path? path (:webfn %))
+             (plugboard.webfunction.plugboards/get-web-functions
+              web-ns)))
    web-namespaces))
 
 (defn web-function-resources [namespaces]
@@ -166,6 +162,7 @@
                (assoc plugboard/path (get-in state [:request :route-params "*"]))
                ))
    plugboard/malformed? (fn [state dlg]
+                          (println "malformed?")
                           [false (assoc state
                                    uri-matching-web-functions
                                    (get-matching-webfunctions-for-path

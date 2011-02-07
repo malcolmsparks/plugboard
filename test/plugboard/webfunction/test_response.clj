@@ -43,7 +43,7 @@
     rep1 []
     (hiccup.core/html
      [:body
-      [:h1  (plugboard.webfunction.webfunction/get-meta :title)]
+      [:h1 (plugboard.webfunction.webfunction/get-meta :title)]
       [:p#query-param (plugboard.webfunction.webfunction/get-query-param "fish")]])))
 
 (deftest test-content-type
@@ -73,5 +73,8 @@
                           (org.xml.sax.InputSource.
                            (java.io.StringReader. (:body response)))))]
     (is (= 200 (:status response)))
-    (is (= "Title" (zf/xml1-> doc :h1 zf/text)))
-    (is (= "Herring" (zf/xml1-> doc :p [(zf/attr= :id "query-param")] zf/text)))))
+;;    (is (= "Title" (zf/xml1-> doc :h1 zf/text)))
+;;    (is (= "Herring" (zf/xml1-> doc :p [(zf/attr= :id "query-param")] zf/text)))
+    ))
+
+
