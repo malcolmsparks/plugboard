@@ -4,7 +4,7 @@ by Malcolm Sparks
 ## Introduction
 
 Plugboard is a library that sits above Compojure and helps web applications comply fully with the HTTP standard. For a better
-description of what this means, please visit [see here](http://webmachine.basho.com/diagram.html).
+description of what this means, please [see here](http://webmachine.basho.com/diagram.html).
 
 ## Building
 
