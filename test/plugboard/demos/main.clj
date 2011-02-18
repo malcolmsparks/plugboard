@@ -28,12 +28,42 @@
    plugboard.demos.accept.configuration
    [compojure.route :as route]
    ring.middleware.params
-   ))
+   [clojure.contrib.find-namespaces :as find-ns]
+   [clojure.contrib.classpath :as cp]
+   [clojure.string :as str]))
 
 (defn create-handler [plugboard]
   (fn [req]
-    (plugboard.webfunction.plugboards/get-response req plugboard)
-    ))
+    (plugboard.webfunction.plugboards/get-response req plugboard)))
+
+(defn create-routes []
+  (letfn [(add-demos-dir [d] (java.io.File. d "plugboard/demos"))
+          (get-demos-dir [] (->> (cp/classpath-directories)
+                                 (filter #(.exists (add-demos-dir %)))
+                                 (map #(add-demos-dir %))
+                                 first))
+          (spl [sym] (re-seq #"[A-Za-z0-9-]+" (str sym)))
+          (_require [c] (require (:sym c)) c)
+          (get-ns [c] (assoc c :ns (find-ns (:sym c))))
+          (find-fn [c] (assoc c :fn (get (ns-publics (:ns c)) 'create-plugboard)))
+          (add-path [c] (assoc c :path (format "/%s/*" (second (reverse (:components c))))))
+          (add-route [c] (assoc c :route (GET (:path c) [] (create-handler ((:fn c))))))
+          (add-index [routes] (cons (GET "/" [] (fn [req] (plugboard.demos.menu/render-page))) routes))
+          (add-404 [routes] (concat routes (list (route/not-found "<h1>Page not found</h1>"))))
+          ]
+    (->>
+     (get-demos-dir)
+     .listFiles
+     (filter #(.isDirectory %))
+     (mapcat find-ns/find-namespaces-in-dir)
+     (map #(hash-map :sym % :components (spl %)))
+     (filter #(= "configuration" (last (:components %))))
+     (map (apply comp (reverse (vector _require get-ns find-fn add-path add-route))))
+     (map :route)
+     add-index
+     add-404
+     (apply routes))))
+
 
 (defroutes main-routes
   (GET "/" [] (fn [req] (plugboard.demos.menu/render-page)))
