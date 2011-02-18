@@ -163,7 +163,7 @@
       :B12 true
       :B13 true
       :C3 (header-exists? "Accept")
-      :C4 false
+      :C4 true
       :D4 (header-exists? "Accept-Language")
       :D5 true
       :E5 (header-exists? "Accept-Charset")

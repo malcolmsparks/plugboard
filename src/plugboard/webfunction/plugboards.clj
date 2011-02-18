@@ -83,8 +83,7 @@
 (defn initialize-state [req]
   {:request req
    :response {:headers {}}
-   uri-matching-web-functions []
-   })
+   uri-matching-web-functions []})
 
 (defn- webfn-matches-path-or-nil? [path webfn]
   (let [p (get (meta webfn) web/path)]
@@ -117,17 +116,14 @@
             content-type (:content-type cf) ; TODO: Add a bit of
                                         ; destructuring here.
             headers (merge (get-in state [:response :headers] (get-headers-from-webfn webfn)))
-            body (get-body status req webfn content-type)
-            ]
+            body (get-body status req webfn content-type)]
         (if (map? body)
           {:status status :headers (merge headers (:headers body)) :body (:body body)}
-          {:status status :headers headers :body body})
-        )
+          {:status status :headers headers :body body}))
       ;; If there is no web-fn...
-      {:status 404
-       :headers []
-       :body "<p>No webfunctions match request</p>"}
-      )))
+      {:status status
+       :headers (get-in state [:response :headers])
+       :body "<p>No webfunctions match request</p>"})))
 
 ;; This creates a handler that can be wrapped in ring middleware.
 (defn create-response-handler [plugboard]
@@ -158,8 +154,7 @@
   {:init (fn [state]
            (-> state
                (assoc web-namespaces namespaces)
-               (assoc plugboard/path (get-in state [:request :route-params "*"]))
-               ))
+               (assoc plugboard/path (get-in state [:request :route-params "*"]))))
    plugboard/malformed? (fn [state dlg]
                           [false (assoc state
                                    uri-matching-web-functions
@@ -213,13 +208,24 @@
                        accepts))))
 
 (defn accept []
-  {plugboard/acceptable-media-type-available?
+  {
+
+   plugboard/acceptable-media-type-available?
    (fn [state dlg]
-     (let [accepts (map :type (conneg/sorted-accept (get-in state [:request :headers "accept"])))
-           unfiltered-functions (get state uri-matching-web-functions)
-           filtered-functions (negotiate-content unfiltered-functions accepts get-content-type-fragment)
-           new-state (assoc state uri-matching-web-functions filtered-functions)
-           ]
-       [(not (empty? filtered-functions)) new-state]
-       )
-     )})
+     (let [accepts (map :type
+                        (conneg/sorted-accept
+                         (get-in state [:request :headers "accept"])))
+           unfiltered-functions (get state uri-matching-web-functions)]
+       (if (empty? unfiltered-functions)
+         ;; There are no matching functions.
+         ;; If we had some, and filtered out all the unacceptable media
+         ;; types, then we would return a 406.
+         ;; However, if there are no resources at this stage then we
+         ;; need to carry on to the resource-exists logic, so we have
+         ;; fire a true return state from C4
+         ;; TODO: Why not rename web-functions to 'representations'?
+         true
+
+         (let [filtered-functions (negotiate-content unfiltered-functions accepts get-content-type-fragment)
+               new-state (assoc state uri-matching-web-functions filtered-functions)]
+           [(not (empty? filtered-functions)) new-state]))))})
