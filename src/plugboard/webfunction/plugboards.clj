@@ -74,10 +74,10 @@
     {"Content-Type" ct}
     {}))
 
-(defn get-body [status request webfn content-type]
+(defn get-body [status state request webfn content-type]
   (if (not (nil? webfn))
     (with-bindings {(var web/*web-context*)
-                    {:status status :request request :meta (meta webfn) :content-type content-type}}
+                    {:status status :state state :request request :meta (meta webfn) :content-type content-type}}
       (webfn))))
 
 (defn initialize-state [req]
@@ -116,7 +116,7 @@
             content-type (:content-type cf) ; TODO: Add a bit of
                                         ; destructuring here.
             headers (merge (get-in state [:response :headers] (get-headers-from-webfn webfn)))
-            body (get-body status req webfn content-type)]
+            body (get-body status state req webfn content-type)]
         (if (map? body)
           {:status status :headers (merge headers (:headers body)) :body (:body body)}
           {:status status :headers headers :body body}))
