@@ -16,28 +16,28 @@
 
 (ns plugboard.demos.hello-world.test-responses
   (:use
-   clojure.test
-   compojure.core
-   plugboard.demos.jetty-fixture
-   clojure.contrib.zip-filter.xml)
+   clojure.test)
   (:require
+   [clojure.contrib.zip-filter.xml :as zfx]
+   [compojure.core :as compojure]
    [clj-http.client :as http]
    plugboard.demos.hello-world.configuration
-   )
-  )
+   [plugboard.demos.jetty-fixture :as jf]))
 
-(defroutes main-routes
-     (GET "/hello-world/*" []
-          (create-handler (plugboard.demos.hello-world.configuration/create-plugboard))))
 
-(use-fixtures :once (make-fixture main-routes))
+(use-fixtures :once
+              (jf/make-fixture
+               (compojure/routes
+                (compojure/GET "/test/*" []
+                     (jf/create-handler (plugboard.demos.hello-world.configuration/create-plugboard))))))
 
 ;; TODO: Test welcome page functionality separately
 
+(def x zfx/xml1->)
+(def text zfx/text)
+
 (deftest test-demo
-  (let [response (http/get (format "http://localhost:%d/hello-world/index.html" (get-jetty-port)))
-        doc (body-zip response)]
+  (let [response (http/get (format "http://localhost:%d/test/index.html" (jf/get-jetty-port)))
+        doc (jf/body-zip response)]
     (is (= 200 (get response :status)))
-    (is (= "Hello World!" (xml1-> doc :body :h1 text)))
-    )
-  )
+    (is (= "Hello World!" (x doc :body :h1 text)))))

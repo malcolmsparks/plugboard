@@ -17,32 +17,40 @@
 (ns plugboard.demos.accept.webfunctions
   (:require
    [plugboard.webfunction.webfunction :as web]
+   [plugboard.webfunction.html :as html]
    [hiccup.core :as hiccup]
-   )
-  )
+   [clojure.contrib.prxml :as prxml]))
+
+(defn ^{web/path "index"
+        web/content-type "application/xhtml+xml"}
+  index-xml []
+  (with-out-str
+    (binding [prxml/*prxml-indent* 4]
+      (prxml/prxml [:decl!]
+       [:html
+        [:head]
+        [:body
+         [:h1 "Index"]
+         [:p "Content type is " (str (web/get-content-type))]
+         (html/table (web/get-request))
+         ]]))))
 
 (defn ^{web/path "index"
         web/content-type "text/html"
         :title "Accept demo - text/html"}
   index-html []
   (hiccup/html
-   [:h1 (web/get-meta :title)]
-   ))
+   [:html
+    [:head]
+    [:body
+     [:h1 "Index"]
+     [:p "Content type is " (str (web/get-content-type))]
+     (html/table (web/get-request))
+     ]]))
 
 (defn ^{web/path "index"
         web/content-type "text/plain"
         :title "Accept demo - text/plain"}
   index-plain []
-  "Accept demo"
-  )
-
-(defn ^{web/path "index"
-        web/content-type "application/xhtml+xml"
-        }
-  index-xml []
-  (hiccup/html
-   [:h1 "Index"]
-   [:p "Content type is " (str (web/get-content-type))]
-   [:p (str (web/get-request))]
-   ))
+  "Accept demo")
 

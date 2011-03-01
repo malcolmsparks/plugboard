@@ -115,7 +115,8 @@
       (let [webfn (:webfn cf)
             content-type (:content-type cf) ; TODO: Add a bit of
                                         ; destructuring here.
-            headers (merge (get-in state [:response :headers] (get-headers-from-webfn webfn)))
+            headers (merge (get-headers-from-webfn webfn)
+                           (get-in state [:response :headers]))
             body (get-body status state req webfn content-type)]
         (if (map? body)
           {:status status :headers (merge headers (:headers body)) :body (:body body)}

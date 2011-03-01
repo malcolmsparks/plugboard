@@ -15,25 +15,28 @@
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
 (ns plugboard.demos.accept.test-accept
-  (:use
-   clojure.test)
+  (:use clojure.test)
   (:require
+   [clj-http.client :as http]
+   [clojure.contrib.zip-filter.xml :as zfx]
+   [compojure.core :as compojure]
    [plugboard.core.conneg :as conneg]
-   [plugboard.webfunction.webfunction :as web]
+   [plugboard.demos.accept.webfunctions]
+   [plugboard.demos.jetty-fixture :as jf]
    [plugboard.webfunction.plugboards :as plugboards]
-   [plugboard.demos.accept.webfunctions]))
-
-(deftest test-accept
-  (let [accepts (map :type (conneg/sorted-accept "application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5"))]
-    (is (= 6 (count accepts)))
-    (let [fn-list (plugboards/negotiate-content
-                   (plugboards/get-web-functions (find-ns 'plugboard.demos.accept.webfunctions))
-                   accepts
-                   plugboards/get-content-type-fragment
-                   )]
-      (println (first fn-list))
-      (is (= 6 (count fn-list))))))
-
+   [plugboard.webfunction.webfunction :as web]))
 
 ;; TODO: Do more tests to check different content negotiation situations.
 
+(use-fixtures :once
+              (jf/make-fixture
+               (compojure/routes
+                (compojure/GET "/test/*" []
+                               (jf/create-handler (plugboard.demos.accept.configuration/create-plugboard))))))
+
+(deftest test-demo
+  (letfn [(get-content-type [response] (:type (conneg/accept-fragment (get-in response [:headers "content-type"]))))]
+    (let [response (http/get (format "http://localhost:%d/test/index" (jf/get-jetty-port)))
+          doc (jf/body-zip response)]
+      (is (= 200 (:status response)))
+      (is (= ["application" "xhtml+xml"] (get-content-type response))))))

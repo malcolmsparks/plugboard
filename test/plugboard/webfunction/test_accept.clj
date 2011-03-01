@@ -17,10 +17,21 @@
 (ns plugboard.webfunction.test-accept
   (:use
    clojure.test
-   clojure.contrib.with-ns
-   plugboard.webfunction.plugboards
+   clojure.contrib.with-ns)
+  (:require
+   [plugboard.webfunction.plugboards :as plugboards]
    [plugboard.core.conneg :as conneg])
   (:import plugboard.webfunction.plugboards.ContentFunction))
+
+(deftest test-accept
+  (let [accepts (map :type (conneg/sorted-accept "application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5"))]
+    (is (= 6 (count accepts)))
+    (let [fn-list (plugboards/negotiate-content
+                   (plugboards/get-web-functions (find-ns 'plugboard.demos.accept.webfunctions))
+                   accepts
+                   plugboards/get-content-type-fragment)]
+      (println (first fn-list))
+      (is (= 6 (count fn-list))))))
 
 (deftest test-conneg
   (letfn [(fmt [p] (apply format (cons "%s/%s" p)))]
@@ -30,7 +41,7 @@
         (first
          (map fmt
               (map :content-type
-                   (negotiate-content
+                   (plugboards/negotiate-content
                     (map #(ContentFunction. nil (:type (conneg/accept-fragment %)))
                          candidates)
                     (map :type (conneg/sorted-accept accept))
@@ -67,5 +78,4 @@
 
      "text/plain"
      ["text/plain"]
-     "text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c"
-     )))
+     "text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c")))
