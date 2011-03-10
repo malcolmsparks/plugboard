@@ -14,7 +14,7 @@
 ;;
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
-(defproject plugboard "1.8.1"
+(defproject plugboard "1.8.2"
   :description "A library to promote correct HTTP semantics for Clojure web applications built on Compojure"
   :url "http://github.com/malcolmsparks/plugboard"
   :dependencies [[org.clojure/clojure "1.2.0"]
