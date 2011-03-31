@@ -15,9 +15,9 @@
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
 (ns plugboard.demos.query-params.webfunctions
+  (:use clojure.contrib.prxml)
   (:require
    [plugboard.webfunction.webfunction :as web]
-   [hiccup.core :as hiccup]
    )
   )
 
@@ -25,7 +25,7 @@
         web/content-type "text/html"
         :title "Query parameters"}
   index-html []
-  (hiccup/html
+  (prxml
    [:html
     [:head [:title (web/get-meta :title)]]
     [:body
@@ -50,7 +50,7 @@
         :title "Query parameters - result"}
   query-html []
   (let [coffee (web/get-query-param "coffee")]
-    (hiccup/html
+    (prxml
      [:html
       [:head [:title (web/get-meta :title)]]
       [:body

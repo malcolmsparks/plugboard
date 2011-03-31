@@ -15,11 +15,10 @@
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
 (ns plugboard.demos.menu
-  (:require [hiccup.core :as hiccup])
-  )
+  (:use clojure.contrib.prxml))
 
 (defn render-page []
-  (hiccup/html
+  (prxml
    [:h1 "Plugboard"]
    [:h2 "Main menu"]
    [:ul

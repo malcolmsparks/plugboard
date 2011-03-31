@@ -15,9 +15,9 @@
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
 (ns plugboard.demos.forms.webfunctions
+  (:use clojure.contrib.prxml)
   (:require
    [plugboard.webfunction.webfunction :as web]
-   [hiccup.core :as hiccup]
    [clojure.java.io :as io]
    [clout.core :as clout]
    )
@@ -29,7 +29,7 @@
         web/content-type "text/html"
         :title "Forms demo"}
   index-html []
-  (hiccup/html
+  (prxml
    [:body
     [:h1 (web/get-meta :title)]
 
@@ -60,7 +60,7 @@
     (dosync (alter favorites assoc key value))
     {:headers {"Location" new-resource-uri}
      :body
-     (hiccup/html
+     (prxml
       [:body
        [:p "Thanks. You shouldn't see this, because the redirect should have kicked in."]])}))
 
@@ -69,7 +69,7 @@
                      (not (nil? (find @favorites key))))
                    )}
   resource-html []
-  (hiccup/html
+  (prxml
    (let [key (get (match-document-route (web/get-path)) "key")
          value (get @favorites key)]
 

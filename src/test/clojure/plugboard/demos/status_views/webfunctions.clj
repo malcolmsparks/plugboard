@@ -14,38 +14,26 @@
 ;;
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
-(ns plugboard.demos.links.webfunctions
+(ns plugboard.demos.status-views.webfunctions
+  (:use clojure.contrib.prxml)
   (:require
    [plugboard.webfunction.webfunction :as web]
-   [hiccup.core :as hiccup]
    )
   )
 
 (defn ^{web/path "index.html"
         web/content-type "text/html"
-        :title "Links"}
+        :title "Index"}
   index-html []
-  (hiccup/html
-   [:html
-    [:head [:title (web/get-meta :title)]]
-    [:body
-     [:h1 (web/get-meta :title)]
-     [:p
-      "Here is a link to "
-      [:a {:href (web/create-uri "other.html")} "another page"]
-      "."
-      ]
-     ]]))
+  (prxml
+   [:h1 (web/get-meta :title)]
+   [:p "Click on this " [:a {:href "missing.html"} "missing link"] "."]
+   ))
 
-(defn ^{web/path "other.html"
+(defn ^{web/status 404
         web/content-type "text/html"
-        :title "Target link"}
-  other-html []
-  (hiccup/html
-   [:html
-    [:head [:title (web/get-meta :title)]]
-    [:body
-     [:h1 (web/get-meta :title)]
-     [:p "You arrived safely at the correct page."]
-     ]]))
-
+        :title "Not found!"}
+  not-found-html []
+  (prxml
+   [:h1 (web/get-meta :title)]
+   [:p "Oh dear. Your page couldn't be found."])) ; TODO: Indicate page in response.

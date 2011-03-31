@@ -15,46 +15,40 @@
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
 (ns plugboard.demos.custom-auth.webfunctions
+  (:use clojure.contrib.prxml)
   (:require
    [plugboard.webfunction.webfunction :as web]
-   [hiccup.core :as hiccup]
-   )
-  )
+   ))
 
 (defn ^{web/path "index.html"
         web/content-type "text/html"
         :title "Custom-Auth demo"}
   index-html []
-  (hiccup/html
+  (prxml
    [:h1 (web/get-meta :title)]
-   [:p [:a {:href "secret-place.html"} "Click here"]
-    ]
-   ))
+   [:p [:a {:href "secret-place.html"} "Click here"]]))
 
 (defn ^{web/path "secret-place.html"
         web/content-type "text/html"
         :title "Secret place"}
   secret-place-html []
-  (hiccup/html
-   [:p "Congratulations, you have passed into the secret place."]
-   ))
+  (prxml
+   [:p "Congratulations, you have passed into the secret place."]))
 
 (defn ^{web/path "secret-place.html"
         web/content-type "text/html"
         web/status 401
         :title "No goodies for you"}
   unauthorized-secret-place-html []
-  (hiccup/html
+  (prxml
    [:h1 (web/get-meta :title)]
-   [:p "Bad luck you failed."]
-  ))
+   [:p "Bad luck you failed."]))
 
 (defn ^{web/path "secret-place.html"
         web/content-type "text/html"
         web/status 303
         :title "Redirect!"}
   redirect []
-  (hiccup/html
+  (prxml
    [:h1 (web/get-meta :title)]
-   [:p "Go to somewhere else. Great!!"]
-  ))
+   [:p "Go to somewhere else. Great!!"]))

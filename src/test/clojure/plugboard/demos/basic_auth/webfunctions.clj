@@ -15,9 +15,9 @@
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
 (ns plugboard.demos.basic-auth.webfunctions
+  (:use clojure.contrib.prxml)
   (:require
    [plugboard.webfunction.webfunction :as web]
-   [hiccup.core :as hiccup]
    )
   )
 
@@ -25,7 +25,7 @@
         web/content-type "text/html"
         :title "Basic-Auth demo"}
   index-html []
-  (hiccup/html
+  (prxml
    [:h1 (web/get-meta :title)]
    [:p [:a {:href "secret-place.html"} "Click here"]
     " - the user id is 'scott', the password is 'tiger'."]
@@ -35,7 +35,7 @@
         web/content-type "text/html"
         :title "Secret place"}
   secret-place-html []
-  (hiccup/html
+  (prxml
    [:p "Congratulations, you have passed into the secret place."]
    ))
 
@@ -44,7 +44,7 @@
         web/status 401
         :title "No goodies for you"}
   unauthorized-secret-place-html []
-  (hiccup/html
+  (prxml
    [:h1 (web/get-meta :title)]
    [:p "Bad luck you failed."]
   ))

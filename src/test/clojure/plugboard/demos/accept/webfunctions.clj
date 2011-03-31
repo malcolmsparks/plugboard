@@ -15,10 +15,10 @@
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
 (ns plugboard.demos.accept.webfunctions
+  (:use clojure.contrib.prxml)
   (:require
    [plugboard.webfunction.webfunction :as web]
    [plugboard.webfunction.html :as html]
-   [hiccup.core :as hiccup]
    [clojure.contrib.prxml :as prxml]))
 
 (defn ^{web/path "index"
@@ -40,7 +40,7 @@
         web/content-type "text/html"
         :title "Accept demo - text/html"}
   index-html []
-  (hiccup/html
+  (prxml
    [:html
     [:head]
     [:body

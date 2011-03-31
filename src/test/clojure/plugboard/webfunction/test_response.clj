@@ -19,12 +19,11 @@
    clojure.test
    clojure.contrib.with-ns
    ring.middleware.params
-   )
+   clojure.contrib.prxml)
   (:require
    [plugboard.core.plugboard :as plugboard]
    plugboard.webfunction.plugboards
    plugboard.webfunction.webfunction
-   [hiccup.core :as hiccup]
    [clojure.xml :as xml]
    [clojure.zip :as zip]
    [clojure.contrib.zip-filter.xml :as zf]
@@ -34,14 +33,14 @@
 
 (with-ns testing-ns
   (clojure.core/refer-clojure)
-  (require 'hiccup.core)
+  (require 'clojure.contrib.prxml)
   (require 'plugboard.webfunction.webfunction)
 
   (defn ^{plugboard.webfunction.webfunction/path "index.html"
           plugboard.webfunction.webfunction/content-type "text/html"
           :title "Title"}
     rep1 []
-    (hiccup.core/html
+    (clojure.contrib.prxml/prxml
      [:body
       [:h1 (plugboard.webfunction.webfunction/get-meta :title)]
       [:p#query-param (plugboard.webfunction.webfunction/get-query-param "fish")]])))
@@ -73,8 +72,7 @@
                           (org.xml.sax.InputSource.
                            (java.io.StringReader. (:body response)))))]
     (is (= 200 (:status response)))
-;;    (is (= "Title" (zf/xml1-> doc :h1 zf/text)))
-;;    (is (= "Herring" (zf/xml1-> doc :p [(zf/attr= :id "query-param")] zf/text)))
-    ))
+    (is (= "Title" (zf/xml1-> doc :h1 zf/text)))
+    (is (= "Herring" (zf/xml1-> doc :p [(zf/attr= :id "query-param")] zf/text)))))
 
 
