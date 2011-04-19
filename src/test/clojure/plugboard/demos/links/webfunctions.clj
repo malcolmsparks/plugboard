@@ -23,24 +23,26 @@
         web/content-type "text/html"
         :title "Links"}
   index-html []
-  (prxml
-   [:html
-    [:head [:title (web/get-meta :title)]]
-    [:body
-     [:h1 (web/get-meta :title)]
-     [:p
-      "Here is a link to "
-      [:a {:href (web/create-uri "other.html")} "another page"]
-      "."]]]))
+  (with-out-str
+    (prxml
+     [:html
+      [:head [:title (web/get-meta :title)]]
+      [:body
+       [:h1 (web/get-meta :title)]
+       [:p
+        "Here is a link to "
+        [:a {:href (web/create-uri "other.html")} "another page"]
+        "."]]])))
 
 (defn ^{web/path "other.html"
         web/content-type "text/html"
         :title "Target link"}
   other-html []
-  (prxml
-   [:html
-    [:head [:title (web/get-meta :title)]]
-    [:body
-     [:h1 (web/get-meta :title)]
-     [:p "You arrived safely at the correct page."]]]))
+  (with-out-str
+    (prxml
+     [:html
+      [:head [:title (web/get-meta :title)]]
+      [:body
+       [:h1 (web/get-meta :title)]
+       [:p "You arrived safely at the correct page."]]])))
 

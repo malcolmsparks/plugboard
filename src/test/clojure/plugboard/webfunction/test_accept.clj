@@ -30,7 +30,6 @@
                    (plugboards/get-web-functions (find-ns 'plugboard.demos.accept.webfunctions))
                    accepts
                    plugboards/get-content-type-fragment)]
-      (println (first fn-list))
       (is (= 6 (count fn-list))))))
 
 (deftest test-conneg

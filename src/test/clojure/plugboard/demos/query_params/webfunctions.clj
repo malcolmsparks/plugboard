@@ -15,45 +15,42 @@
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
 (ns plugboard.demos.query-params.webfunctions
-  (:use clojure.contrib.prxml)
+  (:use clojure.contrib.prxml
+        clojure.contrib.pprint)
   (:require
-   [plugboard.webfunction.webfunction :as web]
-   )
-  )
+   [plugboard.webfunction.webfunction :as web]))
 
 (defn ^{web/path "index.html"
         web/content-type "text/html"
         :title "Query parameters"}
   index-html []
-  (prxml
-   [:html
-    [:head [:title (web/get-meta :title)]]
-    [:body
-     [:h1 (web/get-meta :title)]
-     (map (fn [coffee]
-            (let [href (format "query.html?coffee=%s" coffee)]
-              [:p [:a {:href href} href]]))
-          ["Espresso" "Latte" "Cappuccino" "Americano" "Mocha"])
-     [:p "This shows how multiple values can be queried as a vector :-"]
-     (let [href (format "query.html?coffee=%s&coffee=%s" "Latte" "Espresso")]
-       [:p [:a {:href href} href]])
-     ]]))
+  (with-out-str
+    (prxml
+     [:html
+      [:head [:title (web/get-meta :title)]]
+      [:body
+       [:h1 (web/get-meta :title)]
+       (map (fn [coffee]
+              (let [href (format "query.html?coffee=%s" coffee)]
+                [:p [:a {:href href} href]]))
+            ["Espresso" "Latte" "Cappuccino" "Americano" "Mocha"])
+       [:p "This shows how multiple values can be queried as a vector :-"]
+       (let [href (format "query.html?coffee=%s&coffee=%s" "Latte" "Espresso")]
+         [:p [:a {:href href} href]])]])))
 
 (defn article [s]
   (cond
    (some (set (take 1 s)) [\A \E \H \I \O \U]) "an"
-   :otherwise "a")
-  )
+   :otherwise "a"))
 
 (defn ^{web/path "query.html"
         web/content-type "text/html"
         :title "Query parameters - result"}
   query-html []
   (let [coffee (web/get-query-param "coffee")]
-    (prxml
-     [:html
-      [:head [:title (web/get-meta :title)]]
-      [:body
-       [:h1 (format "You chose %s %s" (article coffee) coffee)]
-       ]])
-    ))
+    (with-out-str
+      (prxml
+       [:html
+        [:head [:title (web/get-meta :title)]]
+        [:body
+         [:h1 (format "You chose %s %s" (article coffee) coffee)]]]))))

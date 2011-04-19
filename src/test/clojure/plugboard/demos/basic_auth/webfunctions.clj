@@ -25,26 +25,29 @@
         web/content-type "text/html"
         :title "Basic-Auth demo"}
   index-html []
-  (prxml
-   [:h1 (web/get-meta :title)]
-   [:p [:a {:href "secret-place.html"} "Click here"]
-    " - the user id is 'scott', the password is 'tiger'."]
-   ))
+  (with-out-str
+    (prxml
+     [:h1 (web/get-meta :title)]
+     [:p [:a {:href "secret-place.html"} "Click here"]
+      " - the user id is 'scott', the password is 'tiger'."]
+     )))
 
 (defn ^{web/path "secret-place.html"
         web/content-type "text/html"
         :title "Secret place"}
   secret-place-html []
-  (prxml
-   [:p "Congratulations, you have passed into the secret place."]
-   ))
+  (with-out-str
+    (prxml
+     [:p "Congratulations, you have passed into the secret place."]
+     )))
 
 (defn ^{web/path "secret-place.html"
         web/content-type "text/html"
         web/status 401
         :title "No goodies for you"}
   unauthorized-secret-place-html []
-  (prxml
-   [:h1 (web/get-meta :title)]
-   [:p "Bad luck you failed."]
-  ))
+  (with-out-str
+    (prxml
+     [:h1 (web/get-meta :title)]
+     [:p "Bad luck you failed."]
+     )))

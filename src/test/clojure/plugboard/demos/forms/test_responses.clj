@@ -23,13 +23,14 @@
    plugboard.util)
   (:require
    [clj-http.client :as http]
-   plugboard.demos.forms.configuration
-   )
-  )
+   [ring.util.codec :as codec]
+   [clojure.string :as string]
+   plugboard.demos.forms.configuration))
 
 (defroutes main-routes
   (ANY "/forms/*" []
-       (create-handler (plugboard.demos.forms.configuration/create-plugboard))))
+       (ring.middleware.params/wrap-params
+        (create-handler (plugboard.demos.forms.configuration/create-plugboard)))))
 
 (use-fixtures :once (make-fixture main-routes))
 
@@ -37,12 +38,9 @@
   (let [url "http://localhost:%d/forms/index.html"
         response (http/get (format url (get-jetty-port)))
         form-doc (body-zip response)
-        form (xml1-> form-doc :form)
-        ]
+        form (xml1-> form-doc :form)]
     (is (= 200 (get response :status)))
-    (is (not (nil? form)))
-    )
-  )
+    (is (not (nil? form)))))
 
 (deftest test-post
   (dosync (ref-set plugboard.demos.forms.webfunctions/favorites {}))
@@ -50,9 +48,7 @@
   (let [url "http://localhost:%d/forms/submit.html"
         response (post-form (format url (get-jetty-port)) {"key" "fish"
                                                            "value" "herring"
-                                                           "submit" "submit"})
-        ]
+                                                           "submit" "submit"})]
     (is (= 200 (get response :status)))
-    (is (= @plugboard.demos.forms.webfunctions/favorites {"fish" "herring"}))
-    )
-  )
+    (is (= @plugboard.demos.forms.webfunctions/favorites {"fish" "herring"}))))
+

@@ -17,6 +17,7 @@
 (ns plugboard.demos.accept.test-accept
   (:use clojure.test)
   (:require
+   plugboard.demos.accept.configuration
    [clj-http.client :as http]
    [clojure.contrib.zip-filter.xml :as zfx]
    [compojure.core :as compojure]
@@ -36,7 +37,6 @@
 
 (deftest test-demo
   (letfn [(get-content-type [response] (:type (conneg/accept-fragment (get-in response [:headers "content-type"]))))]
-    (let [response (http/get (format "http://localhost:%d/test/index" (jf/get-jetty-port)))
-          doc (jf/body-zip response)]
+    (let [response (http/get (format "http://localhost:%d/test/index" (jf/get-jetty-port)))]
       (is (= 200 (:status response)))
       (is (= ["application" "xhtml+xml"] (get-content-type response))))))

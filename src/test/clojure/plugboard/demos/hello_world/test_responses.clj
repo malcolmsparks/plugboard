@@ -29,7 +29,7 @@
               (jf/make-fixture
                (compojure/routes
                 (compojure/GET "/test/*" []
-                     (jf/create-handler (plugboard.demos.hello-world.configuration/create-plugboard))))))
+                               (jf/create-handler (plugboard.demos.hello-world.configuration/create-plugboard))))))
 
 ;; TODO: Test welcome page functionality separately
 

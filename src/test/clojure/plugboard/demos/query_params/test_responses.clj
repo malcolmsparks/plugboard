@@ -26,8 +26,9 @@
   )
 
 (defroutes main-routes
-     (GET "/query-params/*" []
-          (create-handler (plugboard.demos.query-params.configuration/create-plugboard))))
+  (GET "/query-params/*" []
+       (ring.middleware.params/wrap-params
+        (create-handler (plugboard.demos.query-params.configuration/create-plugboard)))))
 
 (use-fixtures :once (make-fixture main-routes))
 

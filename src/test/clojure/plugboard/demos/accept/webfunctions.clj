@@ -18,17 +18,16 @@
   (:use clojure.contrib.prxml)
   (:require
    [plugboard.webfunction.webfunction :as web]
-   [plugboard.webfunction.html :as html]
-   [clojure.contrib.prxml :as prxml]))
+   [plugboard.webfunction.html :as html]))
 
 (defn ^{web/path "index"
         web/content-type "application/xhtml+xml"}
   index-xml []
   (with-out-str
-    (binding [prxml/*prxml-indent* 4]
-      (prxml/prxml
+    (binding [*prxml-indent* 4]
+      (prxml
        [:decl!]
-       [:doctype! "html" "PUBLIC" "\"-//W3C//DTD XHTML 1.0 Strict//EN\"" "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\""]
+       [:doctype! "html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\""]
        [:html
         [:head]
         [:body
@@ -40,13 +39,14 @@
         web/content-type "text/html"
         :title "Accept demo - text/html"}
   index-html []
-  (prxml
-   [:html
-    [:head]
-    [:body
-     [:h1 "Index"]
-     [:p "Content type is " (str (web/get-content-type))]
-     (html/table (web/get-request))]]))
+  (with-out-str
+    (prxml
+     [:html
+      [:head]
+      [:body
+       [:h1 "Index"]
+       [:p "Content type is " (str (web/get-content-type))]
+       (html/table (web/get-request))]])))
 
 (defn ^{web/path "index"
         web/content-type "text/plain"

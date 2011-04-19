@@ -25,15 +25,17 @@
         web/content-type "text/html"
         :title "Index"}
   index-html []
-  (prxml
-   [:h1 (web/get-meta :title)]
-   [:p "Click on this " [:a {:href "missing.html"} "missing link"] "."]
-   ))
+  (with-out-str
+    (prxml
+     [:h1 (web/get-meta :title)]
+     [:p "Click on this " [:a {:href "missing.html"} "missing link"] "."]
+     )))
 
 (defn ^{web/status 404
         web/content-type "text/html"
         :title "Not found!"}
   not-found-html []
-  (prxml
-   [:h1 (web/get-meta :title)]
-   [:p "Oh dear. Your page couldn't be found."])) ; TODO: Indicate page in response.
+  (with-out-str
+    (prxml
+     [:h1 (web/get-meta :title)]
+     [:p "Oh dear. Your page couldn't be found."]))) ; TODO: Indicate page in response.

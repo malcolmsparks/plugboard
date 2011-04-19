@@ -15,7 +15,9 @@
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
 (ns plugboard.webfunction.plugboards
-  (:use clojure.contrib.trace)
+  (:use
+   clojure.contrib.trace
+   clojure.contrib.pprint)
   (:require [plugboard.webfunction.webfunction :as web]
             [clojure.contrib.condition :as condition]
             [plugboard.core.plugboard :as plugboard]
@@ -141,7 +143,8 @@
     (cond
      (fn? p) (true? (p path))
      (string? p) (= p path)
-     :otherwise false)))
+     :otherwise false))
+  )
 
 (defn get-matching-webfunctions-for-path [path web-namespaces]
   (mapcat
@@ -155,7 +158,7 @@
   {:init (fn [state]
            (-> state
                (assoc web-namespaces namespaces)
-               (assoc plugboard/path (get-in state [:request :route-params "*"]))))
+               (assoc plugboard/path (get-in state [:request :route-params :*]))))
    plugboard/malformed? (fn [state dlg]
                           [false (assoc state
                                    uri-matching-web-functions

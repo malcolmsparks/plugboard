@@ -23,9 +23,10 @@
         web/content-type "text/html"
         :title "Hello World!"}
   index-html []
-  (prxml
-   [:html
-    [:head [:title (web/get-meta :title)]]
-    [:body
-     [:h1 (web/get-meta :title)]
-     [:p "Congratulations. Plugboard is working."]]]))
+  (with-out-str
+    (prxml
+     [:html
+      [:head [:title (web/get-meta :title)]]
+      [:body
+       [:h1 (web/get-meta :title)]
+       [:p "Congratulations. Plugboard is working."]]])))

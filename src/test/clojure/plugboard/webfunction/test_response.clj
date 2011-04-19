@@ -17,6 +17,7 @@
 (ns plugboard.webfunction.test-response
   (:use
    clojure.test
+   clojure.contrib.pprint
    clojure.contrib.with-ns
    ring.middleware.params
    clojure.contrib.prxml)
@@ -40,10 +41,11 @@
           plugboard.webfunction.webfunction/content-type "text/html"
           :title "Title"}
     rep1 []
-    (clojure.contrib.prxml/prxml
-     [:body
-      [:h1 (plugboard.webfunction.webfunction/get-meta :title)]
-      [:p#query-param (plugboard.webfunction.webfunction/get-query-param "fish")]])))
+    (with-out-str
+      (clojure.contrib.prxml/prxml
+       [:body
+        [:h1 (plugboard.webfunction.webfunction/get-meta :title)]
+        [:p {:id "query-param"} (plugboard.webfunction.webfunction/get-query-param "fish")]]))))
 
 (deftest test-content-type
   (is (= "text/html"
@@ -56,17 +58,10 @@
       plugboard/default-wiring
       (plugboard.webfunction.plugboards/web-function-resources [testing-ns])))
 
-(def request {:uri "/index.html" :route-params {"*" "index.html"} :request-method :get :query-string "fish=Herring"})
-
-;; After initialization the state should store the web-namespaces.
-(comment ;; Re-instate
-  (deftest test-initialization
-    (is (= {plugboard.webfunction.plugboards/web-namespaces [testing-ns]
-            plugboard/path "/index.html"}
-           (plugboard/initialize-state plugboard {})))))
+(def request {:uri "/index.html" :route-params {:* "index.html"} :request-method :get :query-string "fish=Herring"})
 
 (deftest test-index-response
-  (let [handler (wrap-params (plugboard.webfunction.plugboards/create-response-handler plugboard) :query-string)
+  (let [handler (wrap-params (plugboard.webfunction.plugboards/create-response-handler plugboard))
         response (handler request)
         doc (zip/xml-zip (xml/parse
                           (org.xml.sax.InputSource.

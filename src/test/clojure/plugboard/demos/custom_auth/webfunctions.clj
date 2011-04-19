@@ -24,31 +24,35 @@
         web/content-type "text/html"
         :title "Custom-Auth demo"}
   index-html []
-  (prxml
-   [:h1 (web/get-meta :title)]
-   [:p [:a {:href "secret-place.html"} "Click here"]]))
+  (with-out-str
+    (prxml
+     [:h1 (web/get-meta :title)]
+     [:p [:a {:href "secret-place.html"} "Click here"]])))
 
 (defn ^{web/path "secret-place.html"
         web/content-type "text/html"
         :title "Secret place"}
   secret-place-html []
-  (prxml
-   [:p "Congratulations, you have passed into the secret place."]))
+  (with-out-str
+    (prxml
+     [:p "Congratulations, you have passed into the secret place."])))
 
 (defn ^{web/path "secret-place.html"
         web/content-type "text/html"
         web/status 401
         :title "No goodies for you"}
   unauthorized-secret-place-html []
-  (prxml
-   [:h1 (web/get-meta :title)]
-   [:p "Bad luck you failed."]))
+  (with-out-str
+    (prxml
+     [:h1 (web/get-meta :title)]
+     [:p "Bad luck you failed."])))
 
 (defn ^{web/path "secret-place.html"
         web/content-type "text/html"
         web/status 303
         :title "Redirect!"}
   redirect []
-  (prxml
-   [:h1 (web/get-meta :title)]
-   [:p "Go to somewhere else. Great!!"]))
+  (with-out-str
+    (prxml
+     [:h1 (web/get-meta :title)]
+     [:p "Go to somewhere else. Great!!"])))

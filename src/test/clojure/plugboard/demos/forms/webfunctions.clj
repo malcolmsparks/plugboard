@@ -15,13 +15,14 @@
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
 (ns plugboard.demos.forms.webfunctions
-  (:use clojure.contrib.prxml)
+  (:use
+   clojure.contrib.prxml
+   clojure.contrib.trace
+   clojure.contrib.pprint)
   (:require
    [plugboard.webfunction.webfunction :as web]
    [clojure.java.io :as io]
-   [clout.core :as clout]
-   )
-  )
+   [clout.core :as clout]))
 
 (def favorites (ref {}))
 
@@ -29,28 +30,28 @@
         web/content-type "text/html"
         :title "Forms demo"}
   index-html []
-  (prxml
-   [:body
-    [:h1 (web/get-meta :title)]
+  (with-out-str
+    (prxml
+     [:body
+      [:h1 (web/get-meta :title)]
 
-    (if (> (count @favorites) 0)
-      [:h2 "Current favorites"])
-    (map #(vector :p  [:a {:href (str "resources/" (first %) "/resource.html") } (first %) " - " (second %)])
-         @favorites)
+      (if (> (count @favorites) 0)
+        [:h2 "Current favorites"])
+      (map #(vector :p  [:a {:href (str "resources/" (first %) "/resource.html")} (first %) " - " (second %)])
+           @favorites)
 
-    [:h2 "Enter a new favorite"]
+      [:h2 "Enter a new favorite"]
 
-    [:form {:action "/forms/submit.html" :method "POST"}
-     [:p "Thing: " [:input {:type "text" :name "key"}]]
-     [:p "Favorite: " [:input {:type "text" :name "value"}]]
-     [:p [:input {:type "submit"}]]
-     ]]))
+      [:form {:action "/forms/submit.html" :method "POST"}
+       [:p "Thing: " [:input {:type "text" :name "key"}]]
+       [:p "Favorite: " [:input {:type "text" :name "value"}]]
+       [:p [:input {:type "submit"}]]]])))
 
 (def resource-route (clout/route-compile "resources/:key/resource.html"))
 
-(defn match-document-route [uri]
-  (clout/route-matches resource-route uri)
-  )
+(defn match-document-route [path]
+  (when path
+    (clout/route-matches resource-route {:path-info path})))
 
 (defn ^{web/path "submit.html"}
   submit-html []
@@ -58,24 +59,24 @@
         value (web/get-form-param "value")
         new-resource-uri (web/create-uri (format  "resources/%s/resource.html" key))]
     (dosync (alter favorites assoc key value))
+    (println "new resource uri is " new-resource-uri)
     {:headers {"Location" new-resource-uri}
      :body
-     (prxml
-      [:body
-       [:p "Thanks. You shouldn't see this, because the redirect should have kicked in."]])}))
+     (with-out-str
+       (prxml
+        [:body
+         [:p "Thanks. You shouldn't see this, because the redirect should have kicked in."]]))}))
 
 (defn ^{web/path (fn [path]
-                   (let [key (get (match-document-route path) "key")]
+                   (let [key (get (match-document-route path) :key)]
                      (not (nil? (find @favorites key))))
                    )}
   resource-html []
-  (prxml
-   (let [key (get (match-document-route (web/get-path)) "key")
-         value (get @favorites key)]
-
-     [:body
-      [:p "Your favorite " key " is a " value]
-      ;; TODO: Construct with create-uri
-      [:a {:href "../../index.html"} "Back to form"] 
-      ]))
-  )
+  (with-out-str
+    (prxml
+     (let [key (get (match-document-route (web/get-path)) "key")
+           value (get @favorites key)]
+       [:body
+        [:p "Your favorite " key " is a " value]
+        ;; TODO: Construct with create-uri
+        [:a {:href "../../index.html"} "Back to form"]]))))
