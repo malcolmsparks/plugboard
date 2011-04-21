@@ -24,41 +24,23 @@
             clojure.contrib.base64
             [plugboard.core.conneg :as conneg]))
 
-(def ^{:private true} _wn)
-(def
- ^{:doc "A vector of namespaces that contain web functions."}
- web-namespaces (var _wn))
-
-(def ^{:private true} _newlocation)
-(def
- ^{:doc "The location of the newly appended resource. Used for redirects."}
- new-location (var _newlocation))
-
-(def ^{:private true} _umwf)
-(def
- ^{:doc "A vector of web functions that match the URI."}
- uri-matching-web-functions (var _umwf))
-
-(def ^{:private true} _umwf)
-(def
- ^{:doc "A vector of web functions that match the URI."}
- uri-matching-web-functions (var _umwf))
-
 (defrecord ContentFunction [webfn content-type])
 
-(defn is-web-namespace? [ns]
+(defn is-web-namespace? [^Namespace ns]
   (= (find-ns 'plugboard.webfunction.webfunction) ns))
 
 (defn is-web-function? [f]
   (-> f
-      (meta)
-      (keys)
-      ((partial filter var?))
-      ((partial map meta))
-      ((partial map :ns))
+      meta
+      keys
+      ((partial filter keyword?))
+      ((partial map namespace))
+      ((partial filter (fn [x] (not (nil? x)))))
+      ((partial map symbol))
+      ((partial map find-ns))
       ((partial filter is-web-namespace?))
-      (empty?)
-      (not)))
+      empty?
+      not))
 
 (defn get-web-functions [ns]
   (map (fn [webfn] (ContentFunction. webfn (get (meta webfn) web/content-type)))
@@ -85,7 +67,7 @@
 (defn initialize-state [req]
   {:request req
    :response {:headers {}}
-   uri-matching-web-functions []})
+   ::uri-matching-web-functions []})
 
 (defn- webfn-matches-path-or-nil? [path webfn]
   (let [p (get (meta webfn) web/path)]
@@ -111,7 +93,7 @@
 (defn get-response [req plugboard]
   (let [[status state] (plugboard/get-status-with-state plugboard
                          (initialize-state req))
-        webfns (get state uri-matching-web-functions)
+        webfns (get state ::uri-matching-web-functions)
         matching-webfns (filter (by-status status) webfns)]
     (if-let [^ContentFunction cf (first matching-webfns)]
       (let [webfn (:webfn cf)
@@ -165,17 +147,17 @@
 (defn web-function-resources [namespaces]
   {:init (fn [state]
            (-> state
-               (assoc web-namespaces namespaces)
+               (assoc ::web-namespaces namespaces)
                (assoc plugboard/path (get-in state [:request :route-params :*]))))
    plugboard/malformed? (fn [state dlg]
                           [false (assoc state
-                                   uri-matching-web-functions
+                                   ::uri-matching-web-functions
                                    (get-matching-webfunctions-for-path
                                     (get state plugboard/path)
-                                    (get state web-namespaces)))])
+                                    (get state ::web-namespaces)))])
    plugboard/resource-exists? (fn [state dlg]
                                 (let [result
-                                      (not (empty? (filter is-resource (get state uri-matching-web-functions))))]
+                                      (not (empty? (filter is-resource (get state ::uri-matching-web-functions))))]
                                   [result state]))})
 
 (defn set-header [state name value]
@@ -229,7 +211,7 @@
      (let [accepts (map :type
                         (conneg/sorted-accept
                          (get-in state [:request :headers "accept"])))
-           unfiltered-functions (get state uri-matching-web-functions)]
+           unfiltered-functions (get state ::uri-matching-web-functions)]
        (if (empty? unfiltered-functions)
          ;; There are no matching functions.
          ;; If we had some, and filtered out all the unacceptable media
@@ -241,5 +223,5 @@
          true
 
          (let [filtered-functions (negotiate-content unfiltered-functions accepts get-content-type-fragment)
-               new-state (assoc state uri-matching-web-functions filtered-functions)]
+               new-state (assoc state ::uri-matching-web-functions filtered-functions)]
            [(not (empty? filtered-functions)) new-state]))))})

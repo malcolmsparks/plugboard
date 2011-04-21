@@ -18,20 +18,15 @@
 
 ;; Define keys
 
-(def ^{:private true} _resource nil)
-(def resource (var _resource))
+(def resource ::resource)
 
-(def ^{:private true} _status nil)
-(def status (var _status))
+(def status ::status)
 
-(def ^{:private true} _path nil)
-(def path (var _path))
+(def path ::path)
 
-(def ^{:private true} _content-type nil)
-(def content-type (var _content-type))
+(def content-type ::content-type)
 
-(def ^{:private true} _title nil)
-(def title (var _title))
+(def title ::title)
 
 ;; Context functions
 
