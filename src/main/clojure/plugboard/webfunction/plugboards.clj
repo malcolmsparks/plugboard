@@ -95,7 +95,7 @@
      (string? p) (= p path)
      :otherwise false)))
 
-(defn- webfn-matches-status? [status webfn]
+(defn webfn-matches-status? [status webfn]
   (let [s (get (meta webfn) web/status)]
     (cond
      (fn? s) (true? (s status))
@@ -104,16 +104,16 @@
      ;; status is not an error.
      :otherwise (< status 400))))
 
-(defn- webfn-matches? [path status webfn]
-  (and
-   (webfn-matches-path-or-nil? path webfn)
-   (webfn-matches-status? status webfn)))
+(defn by-status [status]
+  (fn [^ContentFunction cf]
+    (webfn-matches-status? status (:webfn cf))))
 
 (defn get-response [req plugboard]
   (let [[status state] (plugboard/get-status-with-state plugboard
                          (initialize-state req))
-        webfns (get state uri-matching-web-functions)]
-    (if-let [^ContentFunction cf (first webfns)]
+        webfns (get state uri-matching-web-functions)
+        matching-webfns (filter (by-status status) webfns)]
+    (if-let [^ContentFunction cf (first matching-webfns)]
       (let [webfn (:webfn cf)
             content-type (:content-type cf) ; TODO: Add a bit of
                                         ; destructuring here.
@@ -135,16 +135,14 @@
 
 ;; --------------------------------------------------------------------------------
 
-;; This is almost identical to
-;; plugboard.webfunction.response/webfn-matches-path? but doesn't
-;; count functions that don't have paths.
 (defn webfn-matches-path? [path webfn]
   (let [p (get (meta webfn) web/path)]
     (cond
+     (nil? p) true ; accept anything if nil, it could be a handler for
+                                        ; all paths
      (fn? p) (true? (p path))
      (string? p) (= p path)
-     :otherwise false))
-  )
+     :otherwise false)))
 
 (defn get-matching-webfunctions-for-path [path web-namespaces]
   (mapcat
@@ -153,6 +151,16 @@
              (plugboard.webfunction.plugboards/get-web-functions
               web-ns)))
    web-namespaces))
+
+(defn is-resource [^ContentFunction cf]
+  (let [md (meta (:webfn cf))
+        res (get md web/resource)]
+    (cond
+     (fn? res) (res)
+     (nil? res) (contains? md web/path)
+     (true? res) true
+     (false? res) false
+     :otherwise false)))
 
 (defn web-function-resources [namespaces]
   {:init (fn [state]
@@ -166,7 +174,9 @@
                                     (get state plugboard/path)
                                     (get state web-namespaces)))])
    plugboard/resource-exists? (fn [state dlg]
-                                [(not (empty? (get state uri-matching-web-functions))) state])})
+                                (let [result
+                                      (not (empty? (filter is-resource (get state uri-matching-web-functions))))]
+                                  [result state]))})
 
 (defn set-header [state name value]
   (update-in state [:response :headers] (fn [old] (assoc old name value))))

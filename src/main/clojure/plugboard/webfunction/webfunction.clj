@@ -18,6 +18,9 @@
 
 ;; Define keys
 
+(def ^{:private true} _resource nil)
+(def resource (var _resource))
+
 (def ^{:private true} _status nil)
 (def status (var _status))
 

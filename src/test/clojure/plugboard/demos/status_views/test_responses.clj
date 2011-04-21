@@ -56,8 +56,9 @@
 
 (deftest test-demo
   (let [response (webget (format "http://localhost:%d/status-views/missing.html" (get-jetty-port)))
-;;        doc (body-zip response)
+        doc (body-zip response)
         ]
     (is (= 404 (get response :status)))
+    (is (= "Oh dear. Your page couldn't be found." (xml1-> doc :p text)))
     )
   )

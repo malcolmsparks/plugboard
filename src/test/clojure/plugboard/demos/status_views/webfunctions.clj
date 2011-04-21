@@ -31,11 +31,13 @@
      [:p "Click on this " [:a {:href "missing.html"} "missing link"] "."]
      )))
 
-(defn ^{web/status 404
+(defn ^{web/resource false
+        web/status 404
         web/content-type "text/html"
         :title "Not found!"}
   not-found-html []
   (with-out-str
     (prxml
-     [:h1 (web/get-meta :title)]
-     [:p "Oh dear. Your page couldn't be found."]))) ; TODO: Indicate page in response.
+     [:body
+      [:h1 (web/get-meta :title)]
+      [:p "Oh dear. Your page couldn't be found."]]))) ; TODO: Indicate page in response.
