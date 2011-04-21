@@ -7,4 +7,4 @@ target/dependency:
 	mvn dependency:copy-dependencies
 
 run:	target/dependency
-	java -cp 'src/test/clojure:src/main/clojure:target/dependency/*' clojure.main src/test/clojure/plugboard/rundemos.clj
+	java -cp 'src/test/clojure:src/main/clojure:target/dependency/*' clojure.main src/scripts/clojure/rundemos.clj
