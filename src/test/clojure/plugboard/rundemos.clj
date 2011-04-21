@@ -14,7 +14,7 @@
 ;;
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
-(ns rundemos
+(ns plugboard.rundemos
   (:require
    [swank.swank :as swank]
    ring.adapter.jetty

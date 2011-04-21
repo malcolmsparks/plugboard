@@ -70,7 +70,8 @@
   (GET "/hello-world/*" []
        (create-handler (plugboard.demos.hello-world.configuration/create-plugboard)))
   (GET "/query-params/*" []
-       (create-handler (plugboard.demos.query-params.configuration/create-plugboard)))
+       (ring.middleware.params/wrap-params
+        (create-handler (plugboard.demos.query-params.configuration/create-plugboard))))
   (GET "/links/*" []
        (create-handler (plugboard.demos.links.configuration/create-plugboard)))
   (ANY "/forms/*" []

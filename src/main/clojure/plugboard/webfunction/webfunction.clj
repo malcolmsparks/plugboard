@@ -44,8 +44,8 @@
   application does not have to be encoded in the source code of the web
   application."}
   create-uri [path]
-  (let [uri (get *web-context* [:request :uri])
-        curr (get *web-context* [:request :route-params "*"])
+  (let [uri (get-in *web-context* [:request :uri])
+        curr (get-in *web-context* [:request :route-params :*])
         ]
     (str (apply str (take (- (count uri) (count curr)) uri)) path)
     ))
@@ -55,7 +55,7 @@
   )
 
 (defn get-path []
-  (get-in *web-context* [:request :route-params "*"])
+  (get-in *web-context* [:request :route-params :*])
   )
 
 (defn get-request-body []

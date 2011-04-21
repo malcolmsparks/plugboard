@@ -57,9 +57,8 @@
   submit-html []
   (let [key (web/get-form-param "key")
         value (web/get-form-param "value")
-        new-resource-uri (web/create-uri (format  "resources/%s/resource.html" key))]
+        new-resource-uri (web/create-uri (format "resources/%s/resource.html" key))]
     (dosync (alter favorites assoc key value))
-    (println "new resource uri is " new-resource-uri)
     {:headers {"Location" new-resource-uri}
      :body
      (with-out-str
@@ -69,14 +68,14 @@
 
 (defn ^{web/path (fn [path]
                    (let [key (get (match-document-route path) :key)]
-                     (not (nil? (find @favorites key))))
-                   )}
+                     (not (nil? (find @favorites key)))))}
   resource-html []
-  (with-out-str
-    (prxml
-     (let [key (get (match-document-route (web/get-path)) "key")
-           value (get @favorites key)]
+  (let [key (get (match-document-route (web/get-path)) :key)
+        value (get @favorites key)]
+    (with-out-str
+      (prxml
+
        [:body
         [:p "Your favorite " key " is a " value]
-        ;; TODO: Construct with create-uri
-        [:a {:href "../../index.html"} "Back to form"]]))))
+        [:a {:href (web/create-uri "index.html")} "Back to form"]]))))
+

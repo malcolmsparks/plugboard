@@ -15,6 +15,9 @@
       <resource>
         <directory>resources</directory>
       </resource>
+      <resource>
+        <directory>src/main/clojure</directory>
+      </resource>
     </resources>
     <testResources>
       <testResource>
