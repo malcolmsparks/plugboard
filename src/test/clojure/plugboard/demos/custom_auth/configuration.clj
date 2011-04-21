@@ -38,7 +38,7 @@
    (plugboard.webfunction.plugboards/web-function-resources
     (map find-ns ['plugboard.demos.custom-auth.webfunctions]))
 
-   ;; Here we add a simple plugboard combinator that adds welcome page
+   ;; Here we add a simple plugboard that adds welcome page
    ;; behaviour when the uri ends in a slash.
    ;;   (plugboard.webfunction.plugboards/welcome-page "index.html")
    ;; TODO: Integrate with a welcome page.

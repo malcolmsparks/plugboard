@@ -33,7 +33,7 @@
 
 (use-fixtures :once (make-fixture main-routes))
 
-;; This is copied from clj-http.client but we exceptions removed.
+;; This is copied from clj-http.client but with exceptions removed.
 (def request
   (-> #'clj-http.core/request
     http/wrap-redirects
