@@ -1,2 +1,2 @@
 @echo off
-java -cp demos;src;lib\*;lib\dev\* clojure.main rundemos.clj
+java -cp demos;src;target\dependency\* clojure.main rundemos.clj

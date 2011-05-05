@@ -8,11 +8,18 @@ description of what this means, please visit [see here](http://webmachine.basho.
 
 ## Building
 
-To run the demos you will first need to build plugboard using leiningen.
+To run the demos you will first need to build plugboard using
+Maven. Previous releases used leiningen but unfortunately leiningen
+has many incompatibilities with advanced Maven configurations (for
+example, it doesn't yet honor the M2_HOME environment variable, nor
+does it cope well with individual settings.xml files. We will
+reinstate support for leiningen as and when we feel it is more
+mature. Fortunately, much of the simplicity of leiningen can be
+acheived by using Maven in a certain way).
 
-First, run 'lein deps' to pull in all the required dependencies.
+First, run mvn 'mvn dependency:copy-dependencies' to pull in all the required dependencies.
 
-console> lein deps
+console> mvn dependency:copy-dependencies
 
 ## Running the demos
 
