@@ -1,2 +1,2 @@
 #!/bin/sh
-java -cp 'src/test/clojure:src/main/clojure:target/dependency/*' clojure.main src/test/clojure/plugboard/rundemos.clj
+java -cp 'src/test/clojure:src/main/clojure:target/dependency/*' clojure.main src/scripts/clojure/rundemos.clj
