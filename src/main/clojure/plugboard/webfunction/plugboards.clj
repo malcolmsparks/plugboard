@@ -145,20 +145,22 @@
      :otherwise false)))
 
 (defn web-function-resources [namespaces]
-  {:init (fn [state]
-           (-> state
-               (assoc ::web-namespaces namespaces)
-               (assoc plugboard/path (get-in state [:request :route-params :*]))))
-   plugboard/malformed? (fn [state dlg]
-                          [false (assoc state
-                                   ::uri-matching-web-functions
-                                   (get-matching-webfunctions-for-path
-                                    (get state plugboard/path)
-                                    (get state ::web-namespaces)))])
-   plugboard/resource-exists? (fn [state dlg]
-                                (let [result
-                                      (not (empty? (filter is-resource (get state ::uri-matching-web-functions))))]
-                                  [result state]))})
+  (if (not (every? #(not (nil? %)) namespaces))
+    (throw (Exception. "If any of the namespaces given to this function are nil, this will cause errors and confusion during requests. Please fix this error before proceeding."))
+    {:init (fn [state]
+             (-> state
+                 (assoc ::web-namespaces namespaces)
+                 (assoc plugboard/path (get-in state [:request :route-params :*]))))
+     plugboard/malformed? (fn [state dlg]
+                            [false (assoc state
+                                     ::uri-matching-web-functions
+                                     (get-matching-webfunctions-for-path
+                                      (get state plugboard/path)
+                                      (get state ::web-namespaces)))])
+     plugboard/resource-exists? (fn [state dlg]
+                                  (let [result
+                                        (not (empty? (filter is-resource (get state ::uri-matching-web-functions))))]
+                                    [result state]))}))
 
 (defn set-header [state name value]
   (update-in state [:response :headers] (fn [old] (assoc old name value))))
