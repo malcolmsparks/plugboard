@@ -33,6 +33,7 @@
   (is (= {:A1 '(true) :B1 '(true)}
          (merge-plugboards {[:A1 :B1] true})))
   (is (= {:A1 '(true) :B1 '(true false)}
-         (merge-plugboards {[:A1 :B1] true} {:B1 false}))))
-
+         (merge-plugboards {[:A1 :B1] true} {:B1 false})))
+  (is (= 3
+         (count (:A1 (merge-plugboards {:A1 (fn [s d] [true s])} {:A1 (fn [s d] [true s])} {:A1 (fn [s d] [false s])}))))))
 

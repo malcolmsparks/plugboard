@@ -258,28 +258,23 @@
 
 ;; ------------------------ Construction
 
-(defn map-fn-on-map-vals [m f]
-  (zipmap (keys m) (map f (vals m))))
-
 (defn merge-plugboards [& maps]
   (letfn [
           ;; Similar to cons, but ensures
           (cons* [a b]
-                 (if (list? a) (cons b a)
-                     (list a b)))
-          (ensure-list [a] (if (list? a) a (list a)))
+                 (if (vector? a) (conj a b)
+                     (vector a b)))
+          (ensure-vector [a] (if (vector? a) a (vector a)))
           ;; Any key that happens to be a vector is unrolled into
           ;; individual keys (with the same value for each)
           (unroll-keys [mm] (reduce (fn [m [k v]]
                                       (cond (vector? k) (reduce (fn [m2 k2] (assoc m2 k2 v)) m k)
                                             :otherwise (assoc m k v)))
-                                    {} mm))]
-    (->
-     (partial merge-with cons*)         ; Create the merging function
-     (apply (map unroll-keys maps))          ; Call the merging function to
-                                        ; all the maps (we expand each
-                                        ; map first)
-     (map-fn-on-map-vals ensure-list))))
+                                    {} mm))
+          (map-fn-on-map-vals [m f]
+                              (zipmap (keys m) (map f (vals m))))]
+    (-> (apply (partial merge-with cons*) (map unroll-keys maps))
+        (map-fn-on-map-vals ensure-vector))))
 
 ;; ------------------------ Flow
 
@@ -316,7 +311,7 @@
         during the implementation. Normally we prefer the latter elements of the
         list to override the preceeding elements because that is the convention
         already established by the merge function. Reversing this convention
-        would confuse developers already familiar with Clojure conventions."  }
+        would confuse developers already familiar with Clojure conventions."}
   get-plug-decision [state stack]
   (decides state (reverse stack)))
 
@@ -329,7 +324,7 @@
      (integer? decision) [decision new-state]
      :otherwise
      (let [next (lookup-next [junction decision])]
-;;      (println (format "%s -> %s -> %s" junction decision next))
+       ;;      (println (format "%s -> %s -> %s" junction decision next))
        [next new-state]))))
 
 ;; Ultimately returns [status state]
