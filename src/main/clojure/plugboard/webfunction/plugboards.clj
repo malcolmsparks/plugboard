@@ -100,14 +100,25 @@
             content-type (:content-type cf) ; TODO: Add a bit of
                                         ; destructuring here.
             headers (merge (get-headers-from-webfn webfn)
-                           (get-in state [:response :headers]))
-            body (get-body status state req webfn content-type)]
-        (if (map? body)
-          {:status status :headers (merge headers (:headers body)) :body (:body body)}
-          {:status status :headers headers :body body}))
+                           (get-in state [:response :headers]))]
+        (try
+          (let [body (get-body status state req webfn content-type)]
+            (if (map? body)
+              {:status status :headers (merge headers (:headers body)) :body (:body body)}
+              {:status status :headers headers :body body}))
+          (catch Exception e
+            (let [status 500
+                  matching-webfns (filter (by-status status) webfns)]
+              (if-let [^ContentFunction cf (first matching-webfns)]
+                (let [body (get-body status (assoc state :exception e) req (:webfn cf) content-type)]
+                  (if (map? body)
+                    {:status status :headers (merge headers (:headers body)) :body (:body body)}
+                    {:status status :headers headers :body body}))
+                ;; Otherwise just rethrow
+                (throw e))))))
       ;; If there is no web-fn...
       {:status status
-       :headers (get-in state [:response :headers])
+       :headers (assoc (get-in state [:response :headers] "Content-Type" "text/html"))
        :body "<p>No webfunctions match request</p>"})))
 
 ;; This creates a handler that can be wrapped in ring middleware.
@@ -170,8 +181,8 @@
    (fn [state dlg] (= \/ (last (get-in state [:request :uri]))))
    plugboard/resource-moved-permanently?
    (fn [state dlg] [true
-                   (let [location (str (get-in state [:request :uri]) path)]
-                     (set-header state "Location" location))])})
+                    (let [location (str (get-in state [:request :uri]) path)]
+                      (set-header state "Location" location))])})
 
 (defn redirect-to-new-resource []
   {plugboard/redirect? (fn [state dlg] true)})
