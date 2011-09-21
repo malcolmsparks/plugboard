@@ -19,7 +19,7 @@
    clojure.contrib.trace
    clojure.contrib.pprint)
   (:require [plugboard.webfunction.webfunction :as web]
-            [clojure.contrib.condition :as condition]
+            clojure.contrib.prxml
             [plugboard.core.plugboard :as plugboard]
             clojure.contrib.base64
             [plugboard.core.conneg :as conneg]))
@@ -62,6 +62,7 @@
   (if (not (nil? webfn))
     (with-bindings {(var web/*web-context*)
                     {:status status :state state :request request :meta (meta webfn) :content-type content-type}}
+      (println "calling body")
       (webfn))))
 
 (defn initialize-state [req]
@@ -90,7 +91,10 @@
   (fn [^ContentFunction cf]
     (webfn-matches-status? status (:webfn cf))))
 
-(defn get-response [req plugboard]
+;; TODO: Split this large function up in the next major release.
+(defn get-response
+  [req plugboard & {:keys [error-hook] :or {error-hook identity}}]
+  "Drive the plugboard and use the result to select the view"
   (let [[status state] (plugboard/get-status-with-state plugboard
                          (initialize-state req))
         webfns (get state ::uri-matching-web-functions)
@@ -107,10 +111,13 @@
               {:status status :headers (merge headers (:headers body)) :body (:body body)}
               {:status status :headers headers :body body}))
           (catch Exception e
+            (println "here")
             (let [status 500
                   matching-webfns (filter (by-status status) webfns)]
               (if-let [^ContentFunction cf (first matching-webfns)]
-                (let [body (get-body status (assoc state :exception e) req (:webfn cf) content-type)]
+                ;; TODO: Test this, release it, use the error handler to log the support ticket, and add the support ticket id
+                ;; into the state
+                (let [body (get-body status (error-hook (assoc state :exception e)) req (:webfn cf) content-type)]
                   (if (map? body)
                     {:status status :headers (merge headers (:headers body)) :body (:body body)}
                     {:status status :headers headers :body body}))
@@ -118,13 +125,15 @@
                 (throw e))))))
       ;; If there is no web-fn...
       {:status status
-       :headers (assoc (get-in state [:response :headers] "Content-Type" "text/html"))
-       :body "<p>No webfunctions match request</p>"})))
+       :headers (assoc (get-in state [:response :headers]) "Content-Type" "text/html")
+       :body (with-out-str
+               (clojure.contrib.prxml/prxml [:body [:p "No web-functions match request"]
+                                             [:hr] [:p {:style "font-size: smaller"} "Served by plugboard"]]))})))
 
 ;; This creates a handler that can be wrapped in ring middleware.
-(defn create-response-handler [plugboard]
+(defn create-response-handler [plugboard & opts]
   (fn [req]
-    (get-response req plugboard)))
+    (apply get-response (concat (list req plugboard) opts))))
 
 ;; --------------------------------------------------------------------------------
 
