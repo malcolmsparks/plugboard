@@ -62,7 +62,6 @@
   (if (not (nil? webfn))
     (with-bindings {(var web/*web-context*)
                     {:status status :state state :request request :meta (meta webfn) :content-type content-type}}
-      (println "calling body")
       (webfn))))
 
 (defn initialize-state [req]
@@ -108,10 +107,9 @@
         (try
           (let [body (get-body status state req webfn content-type)]
             (if (map? body)
-              {:status status :headers (merge headers (:headers body)) :body (:body body)}
+              {:status (or (:status body) status) :headers (merge headers (:headers body)) :body (:body body)}
               {:status status :headers headers :body body}))
           (catch Exception e
-            (println "here")
             (let [status 500
                   matching-webfns (filter (by-status status) webfns)]
               (if-let [^ContentFunction cf (first matching-webfns)]
@@ -119,7 +117,7 @@
                 ;; into the state
                 (let [body (get-body status (error-hook (assoc state :exception e)) req (:webfn cf) content-type)]
                   (if (map? body)
-                    {:status status :headers (merge headers (:headers body)) :body (:body body)}
+                    {:status (or (:status body) status) :headers (merge headers (:headers body)) :body (:body body)}
                     {:status status :headers headers :body body}))
                 ;; Otherwise just rethrow
                 (throw e))))))
