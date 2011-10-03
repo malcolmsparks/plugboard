@@ -84,7 +84,7 @@
      (number? s) (= s status)
      ;; if there is no status declared we select the function if the
      ;; status is not an error.
-     :otherwise (< status 300))))
+     :otherwise (< status 400))))
 
 (defn by-status [status]
   (fn [^ContentFunction cf]
@@ -98,35 +98,37 @@
                          (initialize-state req))
         webfns (get state ::uri-matching-web-functions)
         matching-webfns (filter (by-status status) webfns)]
-    (if-let [^ContentFunction cf (first matching-webfns)]
-      (let [webfn (:webfn cf)
-            content-type (:content-type cf) ; TODO: Add a bit of
+    (if (:immediate-exit state)
+      {:status status :headers (get-in state [:response :headers]) :body ""}
+      (if-let [^ContentFunction cf (first matching-webfns)]
+        (let [webfn (:webfn cf)
+              content-type (:content-type cf) ; TODO: Add a bit of
                                         ; destructuring here.
-            headers (merge (get-headers-from-webfn webfn)
-                           (get-in state [:response :headers]))]
-        (try
-          (let [body (get-body status state req webfn content-type)]
-            (if (map? body)
-              {:status (or (:status body) status) :headers (merge headers (:headers body)) :body (:body body)}
-              {:status status :headers headers :body body}))
-          (catch Exception e
-            (let [status 500
-                  matching-webfns (filter (by-status status) webfns)]
-              (if-let [^ContentFunction cf (first matching-webfns)]
-                ;; TODO: Test this, release it, use the error handler to log the support ticket, and add the support ticket id
-                ;; into the state
-                (let [body (get-body status (error-hook (assoc state :exception e)) req (:webfn cf) content-type)]
-                  (if (map? body)
-                    {:status (or (:status body) status) :headers (merge headers (:headers body)) :body (:body body)}
-                    {:status status :headers headers :body body}))
-                ;; Otherwise just rethrow
-                (throw e))))))
-      ;; If there is no web-fn...
-      {:status status
-       :headers (assoc (get-in state [:response :headers]) "Content-Type" "text/html")
-       :body (with-out-str
-               (clojure.contrib.prxml/prxml [:body [:p "No web-functions match request"]
-                                             [:hr] [:p {:style "font-size: smaller"} "Served by plugboard"]]))})))
+              headers (merge (get-headers-from-webfn webfn)
+                             (get-in state [:response :headers]))]
+          (try
+            (let [body (get-body status state req webfn content-type)]
+              (if (map? body)
+                {:status (or (:status body) status) :headers (merge headers (:headers body)) :body (:body body)}
+                {:status status :headers headers :body body}))
+            (catch Exception e
+              (let [status 500
+                    matching-webfns (filter (by-status status) webfns)]
+                (if-let [^ContentFunction cf (first matching-webfns)]
+                  ;; TODO: Test this, release it, use the error handler to log the support ticket, and add the support ticket id
+                  ;; into the state
+                  (let [body (get-body status (error-hook (assoc state :exception e)) req (:webfn cf) content-type)]
+                    (if (map? body)
+                      {:status (or (:status body) status) :headers (merge headers (:headers body)) :body (:body body)}
+                      {:status status :headers headers :body body}))
+                  ;; Otherwise just rethrow
+                  (throw e))))))
+        ;; If there is no web-fn...
+        {:status status
+         :headers (assoc (get-in state [:response :headers]) "Content-Type" "text/html")
+         :body (with-out-str
+                 (clojure.contrib.prxml/prxml [:body [:p "No web-functions match request"]
+                                               [:hr] [:p {:style "font-size: smaller"} "Served by plugboard"]]))}))))
 
 ;; This creates a handler that can be wrapped in ring middleware.
 (defn create-response-handler [plugboard & opts]
