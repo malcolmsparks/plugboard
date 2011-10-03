@@ -84,7 +84,7 @@
      (number? s) (= s status)
      ;; if there is no status declared we select the function if the
      ;; status is not an error.
-     :otherwise (< status 400))))
+     :otherwise (< status 300))))
 
 (defn by-status [status]
   (fn [^ContentFunction cf]
