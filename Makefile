@@ -3,6 +3,8 @@
 test:
 	mvn clojure:test
 
+deps:	target/dependency
+
 target/dependency:
 	mvn dependency:copy-dependencies
 
