@@ -51,7 +51,7 @@
 (defn
   ^{:doc "Get the content type from the web function metadata"}
   get-content-type-fragment [^ContentFunction cf]
-  (:type (conneg/accept-fragment (get (meta (:webfn cf)) web/content-type))))
+  (:type (conneg/accept-fragment (or (get (meta (:webfn cf)) web/content-type) "*/*"))))
 
 (defn get-headers-from-webfn [webfn]
   (if-let [ct (get (meta webfn) web/content-type)]
