@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>plugboard</groupId>
   <artifactId>plugboard</artifactId>
-  <version>1.9.5</version>
+  <version>1.9.6</version>
   <name>plugboard</name>
   <description>A library to promote correct HTTP semantics for Clojure web applications built on Compojure</description>
   <url>http://github.com/malcolmsparks/plugboard</url>
