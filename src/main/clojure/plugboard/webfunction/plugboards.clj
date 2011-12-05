@@ -16,17 +16,19 @@
 
 (ns plugboard.webfunction.plugboards
   (:use
-   clojure.contrib.trace
-   clojure.contrib.pprint)
+   clojure.tools.trace
+   clojure.pprint)
   (:require [plugboard.webfunction.webfunction :as web]
-            clojure.contrib.prxml
+            [clojure.data.codec.base64 :as base64]
             [plugboard.core.plugboard :as plugboard]
-            clojure.contrib.base64
             [plugboard.core.conneg :as conneg]))
+
+;; Replace with hiccup
+(defn html [& body] nil)
 
 (defrecord ContentFunction [webfn content-type])
 
-(defn is-web-namespace? [^Namespace ns]
+(defn is-web-namespace? [ns]
   (= (find-ns 'plugboard.webfunction.webfunction) ns))
 
 (defn is-web-function? [f]
@@ -127,7 +129,7 @@
         {:status status
          :headers (assoc (get-in state [:response :headers]) "Content-Type" "text/html")
          :body (with-out-str
-                 (clojure.contrib.prxml/prxml [:body [:p "No web-functions match request"]
+                 (html [:body [:p "No web-functions match request"]
                                                [:hr] [:p {:style "font-size: smaller"} "Served by plugboard"]]))}))))
 
 ;; This creates a handler that can be wrapped in ring middleware.
@@ -203,7 +205,7 @@
 
 (defn basic-authentication [realm requires-auth-fn user password]
   {plugboard/authorized?
-   (let [encoded (clojure.contrib.base64/encode-str (str user ":" password))]
+   (let [encoded (base64/encode (.getBytes (str user ":" password)))]
      (fn [state dlg]
        (if (requires-auth-fn (get state :request))
          (let [res

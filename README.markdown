@@ -17,7 +17,7 @@ reinstate support for leiningen as and when we feel it is more
 mature. Fortunately, much of the simplicity of leiningen can be
 acheived by using Maven in a certain way).
 
-First, run mvn 'mvn dependency:copy-dependencies' to pull in all the required dependencies.
+First, run mvn 'mvn dependency:copy-dependencies' to pull in all the required dependencies. (This is done in preference to using clojure:run. At the time of writing, clojure:run doesn't work particularly well. Firstly, it doesn't work unless mvn package has already been called. Secondly, it runs off Clojure source files that have been copied into the target/ directory, which means often you thinking you're making a change to a source file and you're not).
 
 console> mvn dependency:copy-dependencies
 

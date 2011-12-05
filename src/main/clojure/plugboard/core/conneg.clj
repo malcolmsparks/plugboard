@@ -11,7 +11,7 @@
 ;;;   
 
 (ns plugboard.core.conneg
-  (:require [clojure.contrib.str-utils :as str-utils]))
+  (:require [clojure.string :as string]))
 
 (def accept-fragment-re
   #"^(\*|[^()<>@,;:\"/\[\]?={}         ]+)/(\*|[^()<>@,;:\"/\[\]?={}         ]+)$")
@@ -68,7 +68,7 @@
   weight to a format."
 
   ([f]
-   (let [parts (str-utils/re-split #"\s*;\s*" f)]
+   (let [parts (string/split f #"\s*;\s*")]
      (when (not (empty? parts))
        ;; First part will be a type.
        (let [type-str (first parts)
@@ -86,7 +86,7 @@
 (defn sorted-accept [h]
   (sort-by-q
     (map accept-fragment
-         (str-utils/re-split #"\s*,\s*" h))))
+         (string/split h #"\s*,\s*"))))
 
 (defn acceptable-type
   "Compare two type pairs. If the pairing is acceptable,
@@ -135,8 +135,7 @@
                x)))
 
 (defn- first-fn
-  "Return (f x) for the first item in coll for which (f x) is true.
-  This has gotta be in contrib somewhere."
+  "Return (f x) for the first item in coll for which (f x) is true."
   [f coll]
   (first (filter identity (map f coll))))
   

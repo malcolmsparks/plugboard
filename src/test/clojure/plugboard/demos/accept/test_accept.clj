@@ -19,7 +19,7 @@
   (:require
    plugboard.demos.accept.configuration
    [clj-http.client :as http]
-   [clojure.contrib.zip-filter.xml :as zfx]
+   [clojure.data.zip.xml :as zfx]
    [compojure.core :as compojure]
    [plugboard.core.conneg :as conneg]
    [plugboard.demos.accept.webfunctions]

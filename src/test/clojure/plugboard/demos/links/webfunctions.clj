@@ -15,7 +15,7 @@
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
 (ns plugboard.demos.links.webfunctions
-  (:use clojure.contrib.prxml)
+  (:use hiccup.core)
   (:require
    [plugboard.webfunction.webfunction :as web]))
 
@@ -23,26 +23,24 @@
         web/content-type "text/html"
         :title "Links"}
   index-html []
-  (with-out-str
-    (prxml
-     [:html
-      [:head [:title (web/get-meta :title)]]
-      [:body
-       [:h1 (web/get-meta :title)]
-       [:p
-        "Here is a link to "
-        [:a {:href (web/create-uri "other.html")} "another page"]
-        "."]]])))
+  (html
+   [:html
+    [:head [:title (web/get-meta :title)]]
+    [:body
+     [:h1 (web/get-meta :title)]
+     [:p
+      "Here is a link to "
+      [:a {:href (web/create-uri "other.html")} "another page"]
+      "."]]]))
 
 (defn ^{web/path "other.html"
         web/content-type "text/html"
         :title "Target link"}
   other-html []
-  (with-out-str
-    (prxml
-     [:html
-      [:head [:title (web/get-meta :title)]]
-      [:body
-       [:h1 (web/get-meta :title)]
-       [:p "You arrived safely at the correct page."]]])))
+  (html
+   [:html
+    [:head [:title (web/get-meta :title)]]
+    [:body
+     [:h1 (web/get-meta :title)]
+     [:p "You arrived safely at the correct page."]]]))
 

@@ -17,35 +17,33 @@
 (ns plugboard.webfunction.test-response
   (:use
    clojure.test
-   clojure.contrib.pprint
-   clojure.contrib.with-ns
-   ring.middleware.params
-   clojure.contrib.prxml)
+   clojure.pprint
+   plugboard.util
+   ring.middleware.params)
   (:require
    [plugboard.core.plugboard :as plugboard]
    plugboard.webfunction.plugboards
    plugboard.webfunction.webfunction
    [clojure.xml :as xml]
    [clojure.zip :as zip]
-   [clojure.contrib.zip-filter.xml :as zf]
+   [clojure.data.zip.xml :as zf]
    [clojure.java.io :as io]))
 
 (def testing-ns (create-ns 'plugboard.webfunction.test-body.ns))
 
 (with-ns testing-ns
   (clojure.core/refer-clojure)
-  (require 'clojure.contrib.prxml)
+  (require 'hiccup.core)
   (require 'plugboard.webfunction.webfunction)
 
   (defn ^{plugboard.webfunction.webfunction/path "index.html"
           plugboard.webfunction.webfunction/content-type "text/html"
           :title "Title"}
     rep1 []
-    (with-out-str
-      (clojure.contrib.prxml/prxml
-       [:body
-        [:h1 (plugboard.webfunction.webfunction/get-meta :title)]
-        [:p {:id "query-param"} (plugboard.webfunction.webfunction/get-query-param "fish")]]))))
+    (hiccup.core/html
+     [:body
+      [:h1 (plugboard.webfunction.webfunction/get-meta :title)]
+      [:p {:id "query-param"} (plugboard.webfunction.webfunction/get-query-param "fish")]])))
 
 (deftest test-content-type
   (is (= "text/html"

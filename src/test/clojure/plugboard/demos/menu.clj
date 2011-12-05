@@ -15,21 +15,20 @@
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
 (ns plugboard.demos.menu
-  (:use clojure.contrib.prxml))
+  (:use hiccup.core))
 
 (defn render-page []
-  (with-out-str
-    (prxml
-     [:h1 "Plugboard"]
-     [:h2 "Main menu"]
-     [:ul
-      [:li [:a {:href "hello-world/"} "hello-world"]]
-      [:li [:a {:href "query-params/"} "query-params"]]
-      [:li [:a {:href "links/"} "links"]]
-      [:li [:a {:href "forms/"} "forms"]]
-      [:li [:a {:href "status-views/"} "status-views"]]
-      [:li [:a {:href "basic-auth/"} "basic-auth"]]
-      [:li [:a {:href "custom-auth/index.html"} "custom-auth"]]
-      [:li [:a {:href "accept/index"} "accept"]]
-      ])))
+  (html
+   [:h1 "Plugboard"]
+   [:h2 "Main menu"]
+   [:ul
+    [:li [:a {:href "hello-world/"} "hello-world"]]
+    [:li [:a {:href "query-params/"} "query-params"]]
+    [:li [:a {:href "links/"} "links"]]
+    [:li [:a {:href "forms/"} "forms"]]
+    [:li [:a {:href "status-views/"} "status-views"]]
+    [:li [:a {:href "basic-auth/"} "basic-auth"]]
+    [:li [:a {:href "custom-auth/index.html"} "custom-auth"]]
+    [:li [:a {:href "accept/index"} "accept"]]
+    ]))
      

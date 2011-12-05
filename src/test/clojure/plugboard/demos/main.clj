@@ -28,8 +28,8 @@
    plugboard.demos.accept.configuration
    [compojure.route :as route]
    ring.middleware.params
-   [clojure.contrib.find-namespaces :as find-ns]
-   [clojure.contrib.classpath :as cp]
+   [clojure.java.classpath :as cp]
+   clojure.tools.namespace
    [clojure.string :as str]))
 
 (defn create-handler [plugboard]
@@ -55,7 +55,7 @@
      (get-demos-dir)
      .listFiles
      (filter #(.isDirectory %))
-     (mapcat find-ns/find-namespaces-in-dir)
+     (mapcat clojure.tools.namespace/find-namespaces-in-dir)
      (map #(hash-map :sym % :components (spl %)))
      (filter #(= "configuration" (last (:components %))))
      (map (apply comp (reverse (vector _require get-ns find-fn add-path add-route))))
