@@ -16,8 +16,8 @@
 
 (ns plugboard.webfunction.test-accept
   (:use
-   clojure.test
-   clojure.contrib.with-ns)
+   plugboard.util
+   clojure.test)
   (:require
    [plugboard.webfunction.plugboards :as plugboards]
    [plugboard.core.conneg :as conneg])

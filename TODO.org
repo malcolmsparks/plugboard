@@ -1,0 +1,24 @@
+* Branch 2.0.x
+
+
+* DONE Upgrade to Clojure 1.3
+
+* DONE Use clj-logging-config
+
+* TODO [#A] Remove delegate idea
+
+
+* TODO Much better marketing and website created from it
+
+* TODO Use HTML5 templates
+
+
+* TODO Error content type issue
+
+* TODO Multiple content-types
+Allow web functions to declare multiple content-types so that the same web-function can be used - see RSS issue in fandango where this error message is produced: 
+ERROR - Wiki file not found: /home/malcolm/dev/db/fandango.wiki/blog/rss.xml.md
+
+* TODO Make a ring status wrapper which creates hints as to which view to call
+* TODO Noir-like defpage using args
+* TODO Add pretty printing to hiccup

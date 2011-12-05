@@ -15,7 +15,7 @@
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
 (ns plugboard.demos.hello-world.webfunctions
-  (:use clojure.contrib.prxml)
+  (:use hiccup.core)
   (:require
    [plugboard.webfunction.webfunction :as web]))
 
@@ -23,10 +23,9 @@
         web/content-type "text/html"
         :title "Hello World!"}
   index-html []
-  (with-out-str
-    (prxml
-     [:html
-      [:head [:title (web/get-meta :title)]]
-      [:body
-       [:h1 (web/get-meta :title)]
-       [:p "Congratulations. Plugboard is working."]]])))
+  (html
+   [:html
+    [:head [:title (web/get-meta :title)]]
+    [:body
+     [:h1 (web/get-meta :title)]
+     [:p "Congratulations. Plugboard is working."]]]))

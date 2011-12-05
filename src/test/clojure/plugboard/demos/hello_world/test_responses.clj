@@ -18,7 +18,7 @@
   (:use
    clojure.test)
   (:require
-   [clojure.contrib.zip-filter.xml :as zfx]
+   [clojure.data.zip.xml :as zfx]
    [compojure.core :as compojure]
    [clj-http.client :as http]
    plugboard.demos.hello-world.configuration

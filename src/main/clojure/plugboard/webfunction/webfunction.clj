@@ -30,7 +30,7 @@
 
 ;; Context functions
 
-(def *web-context* nil)
+(def ^:dynamic *web-context* nil)
 
 (defn get-status []
   (get *web-context* :status)

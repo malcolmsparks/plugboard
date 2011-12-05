@@ -15,38 +15,35 @@
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
 (ns plugboard.demos.accept.webfunctions
-  (:use clojure.contrib.prxml)
   (:require
+   [hiccup.core :as hiccup]
    [plugboard.webfunction.webfunction :as web]
    [plugboard.webfunction.html :as html]))
 
 (defn ^{web/path "index"
         web/content-type "application/xhtml+xml"}
   index-xml []
-  (with-out-str
-    (binding [*prxml-indent* 4]
-      (prxml
-       [:decl!]
-       [:doctype! "html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\""]
-       [:html
-        [:head]
-        [:body
-         [:h1 "Index"]
-         [:p "Content type is " (str (web/get-content-type))]
-         (html/table (web/get-request))]]))))
+  (hiccup/html
+   [:decl!]
+   [:doctype! "html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\""]
+   [:html
+    [:head]
+    [:body
+     [:h1 "Index"]
+     [:p "Content type is " (str (web/get-content-type))]
+     (html/table (web/get-request))]]))
 
 (defn ^{web/path "index"
         web/content-type "text/html"
         :title "Accept demo - text/html"}
   index-html []
-  (with-out-str
-    (prxml
-     [:html
-      [:head]
-      [:body
-       [:h1 "Index"]
-       [:p "Content type is " (str (web/get-content-type))]
-       (html/table (web/get-request))]])))
+  (hiccup/html
+   [:html
+    [:head]
+    [:body
+     [:h1 "Index"]
+     [:p "Content type is " (str (web/get-content-type))]
+     (html/table (web/get-request))]]))
 
 (defn ^{web/path "index"
         web/content-type "text/plain"

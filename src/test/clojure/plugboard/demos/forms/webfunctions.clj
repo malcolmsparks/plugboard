@@ -15,11 +15,8 @@
 ;; Please see the LICENSE file for a copy of the GNU Affero General Public License.
 
 (ns plugboard.demos.forms.webfunctions
-  (:use
-   clojure.contrib.prxml
-   clojure.contrib.trace
-   clojure.contrib.pprint)
   (:require
+   [hiccup.core :as hiccup]
    [plugboard.webfunction.webfunction :as web]
    [clojure.java.io :as io]
    [clout.core :as clout]))
@@ -30,22 +27,21 @@
         web/content-type "text/html"
         :title "Forms demo"}
   index-html []
-  (with-out-str
-    (prxml
-     [:body
-      [:h1 (web/get-meta :title)]
+  (hiccup/html
+   [:body
+    [:h1 (web/get-meta :title)]
 
-      (if (> (count @favorites) 0)
-        [:h2 "Current favorites"])
-      (map #(vector :p  [:a {:href (str "resources/" (first %) "/resource.html")} (first %) " - " (second %)])
-           @favorites)
+    (if (> (count @favorites) 0)
+      [:h2 "Current favorites"])
+    (map #(vector :p  [:a {:href (str "resources/" (first %) "/resource.html")} (first %) " - " (second %)])
+         @favorites)
 
-      [:h2 "Enter a new favorite"]
+    [:h2 "Enter a new favorite"]
 
-      [:form {:action "/forms/submit.html" :method "POST"}
-       [:p "Thing: " [:input {:type "text" :name "key"}]]
-       [:p "Favorite: " [:input {:type "text" :name "value"}]]
-       [:p [:input {:type "submit"}]]]])))
+    [:form {:action "/forms/submit.html" :method "POST"}
+     [:p "Thing: " [:input {:type "text" :name "key"}]]
+     [:p "Favorite: " [:input {:type "text" :name "value"}]]
+     [:p [:input {:type "submit"}]]]]))
 
 (def resource-route (clout/route-compile "resources/:key/resource.html"))
 
@@ -61,10 +57,9 @@
     (dosync (alter favorites assoc key value))
     {:headers {"Location" new-resource-uri}
      :body
-     (with-out-str
-       (prxml
-        [:body
-         [:p "Thanks. You shouldn't see this, because the redirect should have kicked in."]]))}))
+     (hiccup/html
+      [:body
+       [:p "Thanks. You shouldn't see this, because the redirect should have kicked in."]])}))
 
 (defn ^{web/path (fn [path]
                    (let [key (get (match-document-route path) :key)]
@@ -72,10 +67,8 @@
   resource-html []
   (let [key (get (match-document-route (web/get-path)) :key)
         value (get @favorites key)]
-    (with-out-str
-      (prxml
-
-       [:body
-        [:p "Your favorite " key " is a " value]
-        [:a {:href (web/create-uri "index.html")} "Back to form"]]))))
+    (hiccup/html
+     [:body
+      [:p "Your favorite " key " is a " value]
+      [:a {:href (web/create-uri "index.html")} "Back to form"]])))
 

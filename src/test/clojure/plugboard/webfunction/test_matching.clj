@@ -17,7 +17,7 @@
 (ns plugboard.webfunction.test-matching
   (:use
    clojure.test
-   clojure.contrib.with-ns
+   plugboard.util
    plugboard.webfunction.plugboards))
 
 (def testing-ns1 (create-ns 'plugboard.webfunction.test-matching.ns1))

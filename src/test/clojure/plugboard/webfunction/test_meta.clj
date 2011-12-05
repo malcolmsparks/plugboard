@@ -17,7 +17,7 @@
 (ns plugboard.webfunction.test-meta
   (:use
    clojure.test
-   clojure.contrib.with-ns
+   plugboard.util
    )
   (:require
    plugboard.webfunction.plugboards

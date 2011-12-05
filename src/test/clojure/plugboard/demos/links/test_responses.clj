@@ -19,7 +19,7 @@
    clojure.test
    compojure.core
    plugboard.demos.jetty-fixture
-   clojure.contrib.zip-filter.xml)
+   clojure.data.zip.xml)
   (:require
    [clj-http.client :as http]
    plugboard.demos.links.configuration
