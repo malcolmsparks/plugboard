@@ -36,9 +36,9 @@
   </repositories>
 
   <scm>
-    <connection>scm:git:git@github.com:malcolmsparks/clj-logging-config.git</connection>
-    <developerConnection>scm:git:git@github.com:malcolmsparks/clj-logging-config.git</developerConnection>
-    <url>git@github.com:malcolmsparks/clj-logging-config.git</url>
+    <connection>scm:git:git@github.com:malcolmsparks/plugboard.git</connection>
+    <developerConnection>scm:git:git@github.com:malcolmsparks/plugboard.git</developerConnection>
+    <url>git@github.com:malcolmsparks/plugboard.git</url>
   </scm>
 
   <build>
