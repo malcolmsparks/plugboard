@@ -98,7 +98,8 @@
   "Drive the plugboard and use the result to select the view"
   (let [[status state] (plugboard/get-status-with-state plugboard
                          (initialize-state req))
-        webfns (get state ::uri-matching-web-functions)
+        webfns (or (get state ::content-type-filtered-uri-matching-web-functions)
+                   (get state ::uri-matching-web-functions))
         matching-webfns (filter (by-status status) webfns)]
     (if (:immediate-exit state)
       {:status status :headers (get-in state [:response :headers]) :body ""}
@@ -115,7 +116,7 @@
                 {:status status :headers headers :body body}))
             (catch Exception e
               (let [status 500
-                    matching-webfns (filter (by-status status) webfns)]
+                    matching-webfns (filter (by-status status) (get state ::uri-matching-web-functions))]
                 (if-let [^ContentFunction cf (first matching-webfns)]
                   ;; TODO: Test this, release it, use the error handler to log the support ticket, and add the support ticket id
                   ;; into the state
@@ -247,5 +248,5 @@
          true
 
          (let [filtered-functions (negotiate-content unfiltered-functions accepts get-content-type-fragment)
-               new-state (assoc state ::uri-matching-web-functions filtered-functions)]
+               new-state (assoc state ::content-type-filtered-uri-matching-web-functions filtered-functions)]
            [(not (empty? filtered-functions)) new-state]))))})
