@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>plugboard</groupId>
   <artifactId>plugboard</artifactId>
-  <version>1.10.0</version>
+  <version>1.10.1</version>
   <name>${project.artifactId}</name>
   <description>A library to promote correct HTTP semantics for Clojure web applications built on Compojure</description>
 
@@ -73,7 +73,7 @@
     <dependency>
       <groupId>clj-logging-config</groupId>
       <artifactId>clj-logging-config</artifactId>
-      <version>1.9.0</version>
+      <version>1.9.6</version>
     </dependency>
 
     <dependency>
