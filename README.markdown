@@ -1,3 +1,8 @@
+IMPORTANT NOTE: Please note that I am no longer maintaining plugboard - I decided early in 2012 that my time
+was better spent helping out with compojure-rest, which we have now renamed to 'liberator'.
+
+Liberator can be found here: http://clojure-liberator.github.com
+
 # plugboard
 by Malcolm Sparks
 
